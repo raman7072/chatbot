@@ -1,6 +1,6 @@
 # ⚡ J.A.R.V.I.S. — SINGH ENTERPRISES TACTICAL AI
 
-<div align="center">
+<div align="justify">
 ```
    █████████   █████   █████   █████    █████████   █████  ░░█████
   ███░░░░░███ ░░███   ░░█████ ░░███    ███░░░░░███ ░░███    ░░███ 
