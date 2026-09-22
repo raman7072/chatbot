@@ -1,0 +1,21 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "title": "test",
+      "content": "sample note",
+      "tags": [],
+      "created_at": "2026-09-22T15:14:35.343047"
+    },
+    {
+      "id": 2,
+      "title": "Arc Reactor",
+      "content": "Mark VII design",
+      "tags": [
+        "ironman",
+        "tech"
+      ],
+      "created_at": "2026-09-22T15:20:19.941958"
+    }
+  ]
+}
