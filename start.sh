@@ -19,8 +19,8 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "\n${CYAN}╔══════════════════════════════════════════════════╗"
-echo -e "║         J.A.R.V.I.S. — Startup Sequence         ║"
-echo -e "║         Just A Rather Very Intelligent System    ║"
+echo -e "║  J.A.R.V.I.S. — Singh Enterprises Tactical AI   ║"
+echo -e "║  Just A Rather Very Intelligent System (Div 16)  ║"
 echo -e "╚══════════════════════════════════════════════════╝${NC}\n"
 
 # Check .env
@@ -56,13 +56,13 @@ npm run dev &
 FRONTEND_PID=$!
 
 echo -e "\n${GREEN}╔══════════════════════════════════════════════════╗"
-echo -e "║  JARVIS is ONLINE                                ║"
-echo -e "║  Frontend: http://localhost:5173                 ║"
-echo -e "║  Backend:  http://localhost:8000                 ║"
-echo -e "║  API Docs: http://localhost:8000/docs            ║"
+echo -e "║  SINGH ENTERPRISES · J.A.R.V.I.S. IS ONLINE      ║"
+echo -e "║  Tactical HUD: http://localhost:5173             ║"
+echo -e "║  Core Gateway: http://localhost:8000             ║"
+echo -e "║  Diagnostics:  http://localhost:8000/docs        ║"
 echo -e "╚══════════════════════════════════════════════════╝${NC}\n"
 
 # Cleanup on exit
-trap "kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; echo -e '\n${CYAN}JARVIS offline. Goodbye, Sir.${NC}'" EXIT
+trap "kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; echo -e '\n${CYAN}Singh Enterprises J.A.R.V.I.S. offline. Goodbye, Sir.${NC}'" EXIT
 
 wait

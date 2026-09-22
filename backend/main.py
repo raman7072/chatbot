@@ -26,8 +26,8 @@ load_dotenv()
 # ── App Setup ────────────────────────────────────────────────────────────────
 
 app = FastAPI(
-    title="JARVIS API",
-    description="Just A Rather Very Intelligent System — Tony Stark's AI, powered by LangGraph + Groq",
+    title="JARVIS API — Singh Enterprises",
+    description="Just A Rather Very Intelligent System — Singh Enterprises Tactical AI, powered by LangGraph + Groq",
     version="1.0.0",
 )
 
@@ -164,9 +164,11 @@ async def get_system_stats():
 async def root():
     return {
         "name": "JARVIS",
+        "organization": "Singh Enterprises",
+        "division": "Division 16",
         "version": "1.0.0",
         "status": "All systems operational.",
-        "quote": "Good day. How may I assist you?",
+        "quote": "Good day. How may I assist you, Sir?",
     }
 
 

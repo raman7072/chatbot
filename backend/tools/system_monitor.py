@@ -10,7 +10,7 @@ from langchain_core.tools import tool
 def get_system_info(component: str = "all") -> str:
     """
     Get real-time system information: CPU, RAM, disk, network, battery, OS details.
-    Like Tony Stark's HUD showing suit diagnostics — but for your computer.
+    Like the Singh Enterprises Armor HUD showing suit and core diagnostics — but for your computer.
 
     Args:
         component: What to monitor. Options: "all", "cpu", "memory", "disk", "network", "battery", "os"
