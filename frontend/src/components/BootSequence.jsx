@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { playBootSound } from '../utils/soundEffects';
 
 const BOOT_LINES = [
-  { text: '[ INIT ] JARVIS v5.0 — Initializing core systems...', type: '' },
+  { text: '[ INIT ] J.A.R.V.I.S. v5.0 — Singh Enterprises Division 16 initializing...', type: '' },
   { text: '[ OK   ] Neural network loaded: llama-3.3-70b-versatile', type: 'ok' },
   { text: '[ OK   ] LangGraph agent compiled — 11 tools registered', type: 'ok' },
   { text: '[ OK   ] Memory subsystem: MemorySaver online', type: 'ok' },
@@ -13,7 +13,7 @@ const BOOT_LINES = [
   { text: '[ OK   ] File system access: Initialized', type: 'ok' },
   { text: '[ OK   ] Voice interface: Web Speech API ready', type: 'ok' },
   { text: '[ OK   ] Streaming SSE channel: Established', type: 'ok' },
-  { text: '[ BOOT ] All systems nominal. Good day, Sir.', type: 'ok' },
+  { text: '[ BOOT ] Singh Enterprises core nominal. Good day, Sir.', type: 'ok' },
 ];
 
 export default function BootSequence({ onComplete }) {
@@ -81,7 +81,7 @@ export default function BootSequence({ onComplete }) {
         color: 'rgba(0,212,255,0.4)',
         letterSpacing: '3px',
       }}>
-        STARK INDUSTRIES · SYSTEM BOOT · {progress}%
+        SINGH ENTERPRISES · SYSTEM BOOT · {progress}%
       </div>
     </div>
   );

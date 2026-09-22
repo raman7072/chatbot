@@ -1,5 +1,5 @@
 /**
- * JARVIS Stark Industries HUD Sound Synthesizer
+ * JARVIS Singh Enterprises HUD Sound Synthesizer
  * Uses Web Audio API to procedurally generate futuristic Iron Man HUD sound effects.
  * Requires no external audio files, works offline, and has zero latency.
  */

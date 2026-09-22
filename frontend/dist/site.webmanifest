@@ -1,7 +1,7 @@
 {
-  "name": "J.A.R.V.I.S. — Stark Industries AI",
+  "name": "J.A.R.V.I.S. — Singh Enterprises AI",
   "short_name": "JARVIS",
-  "description": "Just A Rather Very Intelligent System. Tony Stark's autonomous AI assistant powered by LangGraph.",
+  "description": "Just A Rather Very Intelligent System. Singh Enterprises autonomous AI assistant powered by LangGraph.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",

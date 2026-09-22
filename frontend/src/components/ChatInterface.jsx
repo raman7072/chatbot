@@ -8,11 +8,11 @@ import { playSendSound, playReceiveSound, playToolSound, playClickSound } from '
 const QUICK_COMMANDS = [
   { icon: '🔢', label: 'Calculate', cmd: 'Calculate: 2^10 + 15% of 200 - sqrt(144)' },
   { icon: '🌐', label: 'Search the web', cmd: 'Search the web for the latest advancements in AI and robotics' },
-  { icon: '📖', label: 'Wikipedia', cmd: 'Look up Tony Stark on Wikipedia and summarize' },
+  { icon: '📖', label: 'Wikipedia', cmd: 'Look up Singh Enterprises and latest AI innovations on Wikipedia' },
   { icon: '💻', label: 'System status', cmd: 'Run a full system diagnostic and report status' },
   { icon: '🌤️', label: 'Weather', cmd: 'What is the current weather and forecast for Tokyo?' },
   { icon: '🐍', label: 'Run Python', cmd: 'Write and execute Python code to calculate the first 10 prime numbers' },
-  { icon: '📝', label: 'Save note', cmd: 'Save a note titled "Arc Reactor Status" with content: Output at 100% capacity' },
+  { icon: '📝', label: 'Save note', cmd: 'Save a note titled "Arc Reactor Status" with content: Singh Enterprises Division 16 - Output at 100% capacity' },
   { icon: '🗂️', label: 'List files', cmd: 'List all files in the current workspace directory' },
 ];
 
@@ -47,7 +47,7 @@ export default function ChatInterface({
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: '*System online. All modules initialized.*\n\nGood day. I am **J.A.R.V.I.S.** — Just A Rather Very Intelligent System. How may I assist you today, Sir?\n\nI have full access to web search, Wikipedia, file operations, system diagnostics, sandboxed Python execution, weather data, and persistent memory.',
+      content: '*Singh Enterprises Division 16 — All systems online and operational.*\n\nGood day. I am **J.A.R.V.I.S.** — Just A Rather Very Intelligent System. How may I assist you today, Sir?\n\nI have full access to deep web search, Wikipedia archives, file operations, hardware diagnostics, sandboxed Python computation, meteorological data, and persistent tactical memory.',
       timestamp: new Date(),
     }]);
   }, [sessionId]);
@@ -229,6 +229,64 @@ export default function ChatInterface({
     }
   }, [input, streaming, sessionId, soundEnabled, updateStreaming, updateToolInUse]);
 
+  const clearChat = useCallback(() => {
+    stopSpeaking();
+    setIsSpeaking(false);
+    playClickSound(soundEnabled);
+    setMessages([{
+      id: 'greeting',
+      role: 'assistant',
+      content: '*Singh Enterprises Division 16 — Communication buffer cleared. All modules nominal.*\n\nHow may I assist you, Sir?',
+      timestamp: new Date(),
+    }]);
+  }, [soundEnabled]);
+
+  const exportMissionLog = useCallback(() => {
+    playClickSound(soundEnabled);
+    let log = `# ⚡ J.A.R.V.I.S. MISSION TRANSCRIPT\n`;
+    log += `**Organization**: Singh Enterprises · Division 16\n`;
+    log += `**Session ID**: ${sessionId}\n`;
+    log += `**Exported At**: ${new Date().toISOString()}\n\n---\n\n`;
+
+    messages.forEach((m) => {
+      const sender = m.role === 'assistant' ? 'J.A.R.V.I.S.' : 'SIR';
+      const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString() : '';
+      log += `### [${time}] ${sender}\n\n`;
+      if (m.toolsExecuted && m.toolsExecuted.length > 0) {
+        log += `*Tactical Modules Invoked:*\n`;
+        m.toolsExecuted.forEach((t) => {
+          log += `- **${t.tool.toUpperCase()}**: ${t.input || ''}\n`;
+          if (t.output) log += `  > ${t.output}\n`;
+        });
+        log += `\n`;
+      }
+      log += `${m.content}\n\n---\n\n`;
+    });
+
+    const blob = new Blob([log], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `jarvis_mission_log_${Date.now()}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [sessionId, messages, soundEnabled]);
+
+  const handleToggleSpeak = useCallback((text) => {
+    if (isSpeaking) {
+      stopSpeaking();
+      setIsSpeaking(false);
+    } else {
+      speak(
+        text,
+        () => setIsSpeaking(true),
+        () => setIsSpeaking(false)
+      );
+    }
+  }, [isSpeaking]);
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -251,15 +309,37 @@ export default function ChatInterface({
             <span>💬</span>
             <span>COMMUNICATION INTERFACE</span>
           </div>
-          <span className="panel-tag">
-            {streaming ? '● ACTIVE' : '○ STANDBY'}
-          </span>
+          <div className="panel-header-actions">
+            <button
+              className="panel-action-btn"
+              onClick={exportMissionLog}
+              title="Export tactical transcript to markdown"
+            >
+              📜 EXPORT LOG
+            </button>
+            <button
+              className="panel-action-btn"
+              onClick={clearChat}
+              disabled={streaming}
+              title="Clear chat buffer"
+            >
+              🗑️ CLEAR
+            </button>
+            <span className="panel-tag">
+              {streaming ? '● ACTIVE' : '○ STANDBY'}
+            </span>
+          </div>
         </div>
 
         {/* Messages */}
         <div className="messages-container">
           {messages.map((msg) => (
-            <MessageBubble key={msg.id} msg={msg} />
+            <MessageBubble
+              key={msg.id}
+              msg={msg}
+              onSpeak={handleToggleSpeak}
+              isSpeaking={isSpeaking}
+            />
           ))}
           <div ref={messagesEndRef} />
         </div>
@@ -473,11 +553,19 @@ function CodeBlock({ inline, className, children, ...props }) {
   );
 }
 
-function MessageBubble({ msg }) {
+function MessageBubble({ msg, onSpeak, isSpeaking }) {
   const isJarvis = msg.role === 'assistant';
   const time = msg.timestamp?.toLocaleTimeString('en-US', {
     hour12: false, hour: '2-digit', minute: '2-digit',
   });
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (!msg.content) return;
+    navigator.clipboard.writeText(msg.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className={`message ${isJarvis ? 'jarvis' : 'user'}`}>
@@ -522,6 +610,28 @@ function MessageBubble({ msg }) {
               Processing...
             </div>
           ) : null}
+
+          {/* Action toolbar for completed assistant response */}
+          {isJarvis && msg.content && !msg.streaming && (
+            <div className="msg-actions">
+              <button
+                className="msg-action-btn"
+                onClick={handleCopy}
+                title="Copy entire response"
+              >
+                {copied ? '✓ COPIED' : '📋 COPY'}
+              </button>
+              {onSpeak && (
+                <button
+                  className={`msg-action-btn ${isSpeaking ? 'active' : ''}`}
+                  onClick={() => onSpeak(msg.content)}
+                  title="Vocalize this response"
+                >
+                  {isSpeaking ? '⏹ STOP' : '🔊 VOCALIZE'}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

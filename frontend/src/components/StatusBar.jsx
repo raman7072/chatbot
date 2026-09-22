@@ -99,7 +99,7 @@ export default function StatusBar({
         </div>
         <div>
           <div className="logo-text">JARVIS</div>
-          <div className="logo-subtitle">Stark Industries · v5.0</div>
+          <div className="logo-subtitle">Singh Enterprises · v5.0</div>
         </div>
       </div>
 
@@ -133,7 +133,7 @@ export default function StatusBar({
               playClickSound(soundEnabled);
               setThemeMenuOpen(prev => !prev);
             }}
-            title="Stark Armor Protocols (Theme Switcher)"
+            title="Singh Armor Protocols (Theme Switcher)"
           >
             <span className="theme-indicator-dot" style={{ background: activeProto.color, boxShadow: `0 0 6px ${activeProto.color}` }} />
             {activeProto.name}
@@ -142,7 +142,7 @@ export default function StatusBar({
 
           {themeMenuOpen && (
             <div className="theme-dropdown">
-              <div className="theme-dropdown-header">STARK ARMOR PROTOCOLS</div>
+              <div className="theme-dropdown-header">SINGH ARMOR PROTOCOLS</div>
               {ARMOR_PROTOCOLS.map(proto => (
                 <button
                   key={proto.id}
