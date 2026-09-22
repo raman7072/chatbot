@@ -1,113 +1,148 @@
-# ⚡ J.A.R.V.I.S. — STARK INDUSTRIES TACTICAL AI
+# ⚡ J.A.R.V.I.S. — SINGH ENTERPRISES TACTICAL AI
 
 ```
-   █████████   █████████  ██████████  ███████████   █████  █████████ 
-  ███░░░░░███ ░░███░░░░░  ░░███░░░░███░░███░░░░░███ ░░███  ███░░░░░███
- ░███    ░░░   ░███        ░███   ░░███░███    ░███  ░███ ░███    ░░░ 
- ░░█████████   ░█████████  ░███    ░███░██████████   ░███ ░░█████████ 
-  ░░░░░░░░███  ░███░░░░░   ░███    ░███░███░░░░░███  ░███  ░░░░░░░░███
-  ███    ░███  ░███        ░███    ███ ░███    ░███  ░███  ███    ░███
- ░░█████████   ░█████████  ██████████  █████   █████ █████░░█████████ 
-  ░░░░░░░░░    ░░░░░░░░░  ░░░░░░░░░░  ░░░░░   ░░░░░ ░░░░░  ░░░░░░░░░  
+   █████████   █████   █████   █████    █████████   █████  ░░█████
+  ███░░░░░███ ░░███   ░░█████ ░░███    ███░░░░░███ ░░███    ░░███ 
+ ░███    ░░░   ░███    ░███░███ ░███  ░███    ░░░   ░███     ░███ 
+ ░░█████████   ░███    ░███░░███░███  ░███   █████  ░████████████ 
+  ░░░░░░░░███  ░███    ░███ ░░██████  ░███  ░░░███  ░███░░░░░░███ 
+  ███    ░███  ░███    ░███  ░░█████  ░███    ░███  ░███     ░███ 
+ ░░█████████   █████   █████  ░░████  ░░██████████  █████   █████ 
+  ░░░░░░░░░    ░░░░░   ░░░░░   ░░░░    ░░░░░░░░░░   ░░░░░   ░░░░░ 
                [ JUST A RATHER VERY INTELLIGENT SYSTEM ]
-                   STARK INDUSTRIES · DIVISION 16
+                  SINGH ENTERPRISES · DIVISION 16
 ```
 
 <div align="center">
 
-[![Stark Industries](https://img.shields.io/badge/SECURITY%20CLEARANCE-LEVEL%209%20STARK-00d4ff?style=for-the-badge&logo=shield)](https://github.com)
+[![Singh Enterprises](https://img.shields.io/badge/SECURITY%20CLEARANCE-LEVEL%209%20SINGH-00d4ff?style=for-the-badge&logo=shield)](https://github.com)
 [![Arc Reactor](https://img.shields.io/badge/ARC%20REACTOR-STABILIZED%20100%25-ffb800?style=for-the-badge&logo=electron)](https://github.com)
 [![Neural Core](https://img.shields.io/badge/NEURAL%20CORE-LLAMA%203.3%2070B%20%40%20GROQ-f97316?style=for-the-badge&logo=groq)](https://groq.com)
 [![Tactical Agent](https://img.shields.io/badge/AGENT%20RUNTIME-LANGGRAPH%20ReAct-00ffaa?style=for-the-badge&logo=langchain)](https://langchain-ai.github.io/langgraph/)
 [![HUD Interface](https://img.shields.io/badge/HUD%20INTERFACE-REACT%2019%20+%20VITE-61dafb?style=for-the-badge&logo=react)](https://vitejs.dev)
 
 > *"Good day. I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. How may I assist you today, Sir?"*  
-> — **J.A.R.V.I.S.**
+> — **J.A.R.V.I.S. (Singh Enterprises Division 16)**
 
 </div>
 
 ---
 
+## 📑 Table of Contents
+
+- [🛰️ Mission Briefing](#️-mission-briefing)
+- [🛡️ Armor Protocol Matrix (HUD Themes)](#️-armor-protocol-matrix-hud-themes)
+- [⚡ Tactical Capabilities & Armamentarium](#-tactical-capabilities--armamentarium)
+- [🎛️ Interactive HUD Systems & Features](#️-interactive-hud-systems--features)
+- [🏗️ Technical Architecture](#️-technical-architecture)
+- [📁 Classified Directory Layout](#-classified-directory-layout)
+- [🚀 Ignition Sequence (Quick Start)](#-ignition-sequence-quick-start)
+- [🛠️ Manual Development Bridge](#️-manual-development-bridge)
+- [💬 Sample Tactical Orders](#-sample-tactical-orders)
+- [🔐 Singh Security & Quarantine Protocols](#-singh-security--quarantine-protocols)
+- [📜 Singh Enterprises Disclaimer](#-singh-enterprises-disclaimer)
+
+---
+
 ## 🛰️ Mission Briefing
 
-**J.A.R.V.I.S.** is a production-grade, Marvel-faithful AI operating assistant modeled directly after Tony Stark's legendary companion. Built with the **LangGraph ReAct architecture** and supercharged by **Groq's ultra-low-latency Llama 3.3 70B**, JARVIS blends dry British wit, infallible intelligence, and tactical computing into an immersive Iron Man Heads-Up Display (HUD).
+**J.A.R.V.I.S.** is a production-grade, Marvel-faithful AI operating assistant developed under the **Singh Enterprises Tactical Computing Division**. Designed as a next-generation counterpart to the legendary artificial intelligence companion, J.A.R.V.I.S. combines the **LangGraph ReAct agent architecture** with **Groq's Llama 3.3 70B** ultra-low-latency inference engine.
 
-Whether calibrating system diagnostics, executing sandboxed Python subroutines, retrieving global satellite intel, or tracking weather telemetry across worldwide coordinates, JARVIS stands ready at your command.
+It embodies an articulate British persona with dry wit, uncompromising loyalty, and total domain awareness. Wrapped inside an Iron Man Mark-Series Heads-Up Display (HUD), J.A.R.V.I.S. delivers real-time streaming telemetry, live system diagnostics, sandboxed computational abilities, and bi-directional vocal communications.
 
 ---
 
 ## 🛡️ Armor Protocol Matrix (HUD Themes)
 
-JARVIS features customizable armor colorways with reactive HUD styling, ambient scanlines, and real-time palette shifting:
+Engineered directly into the Singh Enterprises HUD is a real-time **Armor Protocol Selector**. Switch battle colorways instantly via the tactical control panel:
 
-| Protocol | Designation | Palette | Mission Profile |
+| Protocol | Designation | HUD Palette | Tactical Profile |
 |---|---|---|---|
-| **MARK IV** | *Arc Cyan* | `#00d4ff` | Standard Malibu Lab diagnostic display |
-| **MARK VII** | *Gold Titanium & Hot Rod Red* | `#ffb800` | The Avengers assault & heavy engagement |
-| **STEALTH OPS** | *Tactical Emerald* | `#00ffaa` | Night infiltration & low-observable radar ops |
-| **MARK L** | *Nano-Tech Violet* | `#c060ff` | Bleeding Edge Infinity War nanoparticle HUD |
-| **VERONICA** | *Hulkbuster Amber* | `#ff7700` | Orbital cage deployment & heavy industrial telemetry |
+| **MARK IV** | *Arc Cyan* | `#00d4ff` | Standard Malibu Lab telemetry & primary diagnostics |
+| **MARK VII** | *Gold Titanium & Hot Rod Red* | `#ffb800` | The Avengers frontline heavy combat configuration |
+| **STEALTH OPS** | *Tactical Emerald* | `#00ffaa` | Low-radar acoustic infiltration & stealth ops |
+| **MARK L** | *Nano-Tech Violet* | `#c060ff` | Bleeding Edge nanoparticle formation & fluid HUD |
+| **VERONICA** | *Hulkbuster Amber* | `#ff7700` | Heavy orbital cage deployment & maximum torque mode |
 
 ---
 
-## ⚡ Tactical Capabilities & Subsystems
+## ⚡ Tactical Capabilities & Armamentarium
 
-JARVIS is equipped with an integrated **11-tool armamentarium** configured through LangGraph:
+J.A.R.V.I.S. is armed with an integrated suite of **11 operational tools**, coordinated autonomously through LangGraph ReAct reasoning:
 
-| Module | Codename | Description & Tactical Command |
+| Tactical Module | Codename | Description & Tactical Command |
 |---|---|---|
-| 🌐 **Deep Orbital Recon** | `web_search` | Real-time global web search via DuckDuckGo.<br>*"JARVIS, search for the latest breakthroughs in fusion power."* |
-| 📚 **Stark Archives** | `wikipedia_lookup` | Deep encyclopedia queries with contextual summarization.<br>*"Look up Tony Stark on Wikipedia and summarize his arc."* |
-| ⚡ **Arc Reactor Telemetry** | `get_system_info` | Real-time hardware diagnostics: CPU cores, RAM, disk, & network bandwidth.<br>*"Run a full system diagnostic and report status."* |
-| 🌤️ **Atmospheric Sat-Link** | `get_weather` | Real-time meteorological telemetry & forecasts via Open-Meteo.<br>*"Check the atmospheric conditions and weather in Tokyo."* |
-| 🐍 **Repulsor Code Sandbox** | `execute_python` | Safe local Python execution sandbox for math, data analysis, and simulations.<br>*"Write and execute Python to calculate the first 100 Fibonacci numbers."* |
-| 🗂️ **Stark Vault File Ops** | `file_read` / `file_write` / `list_files` | Secure filesystem access to browse, inspect, and draft local workspace files.<br>*"List files in the current directory and inspect main.py."* |
-| 🧠 **Tactical Memory Bank** | `save_note` / `read_notes` / `delete_note` | Persistent tactical notes preserved locally across sessions in `jarvis_notes.json`.<br>*"Save a note: Arc Reactor running at 100% capacity."* |
-| 🧮 **Trajectory Computer** | `calculate` | High-precision scientific computations and mathematical evaluations.<br>*"Calculate 2^16 + sqrt(144) * sin(pi/4)."* |
-| 🎙️ **Acoustic Transceiver** | `Web Speech API` | Bi-directional hands-free vocal interface with British speech synthesis and HUD waveform.<br>*Voice recognition with mute & interrupt protocols.* |
+| 🌐 **Deep Orbital Recon** | `web_search` | Global web reconnaissance via DuckDuckGo.<br>*"JARVIS, search for recent breakthroughs in fusion reactors."* |
+| 📚 **Singh Archives** | `wikipedia_lookup` | Deep encyclopedia queries with contextual extraction.<br>*"Look up Tony Stark on Wikipedia and summarize his arc."* |
+| ⚡ **Arc Telemetry Monitor** | `get_system_info` | Real-time hardware telemetry: CPU utilization, RAM, disk headroom, and network I/O.<br>*"Run a full system diagnostic and report status."* |
+| 🌤️ **Atmospheric Sat-Link** | `get_weather` | Real-time meteorological telemetry & forecasts via Open-Meteo.<br>*"Check atmospheric conditions and temperature in Tokyo."* |
+| 🐍 **Repulsor Code Sandbox** | `execute_python` | Safe local Python execution sandbox for complex mathematics, algorithms, and simulations.<br>*"Write and execute Python to calculate the first 100 Fibonacci numbers."* |
+| 🗂️ **Singh Vault File Ops** | `file_read` / `file_write` / `list_files` | Secure filesystem operations to inspect, create, and list local project directories.<br>*"List files in the current workspace directory and inspect main.py."* |
+| 🧠 **Tactical Memory Bank** | `save_note` / `read_notes` / `delete_note` | Persistent notes preserved across sessions in `jarvis_notes.json`.<br>*"Save a note: Singh Enterprises Arc Reactor running at 100% capacity."* |
+| 🧮 **Trajectory Computer** | `calculate` | High-precision scientific computation, algebra, and trigonometry.<br>*"Calculate 2^16 + sqrt(144) * sin(pi/4)."* |
+| 🎙️ **Vocal Transceiver** | `Web Speech API` | Bi-directional speech-to-text with British voice synthesis and real-time audio waveform visualizer. |
 | 🔊 **HUD Sound Synthesizer** | `Web Audio API` | Zero-latency procedural audio engine: Arc core hum, repulsor chirps, and telemetry blips. |
+
+---
+
+## 🎛️ Interactive HUD Systems & Features
+
+### ⚡ RT-IV Arc Reactor Core Widget
+- **Live State Indicator**: Rotates coils dynamically with counter-rotating turbine rings.
+- **Discharge Trigger**: Click directly on the Arc Reactor widget in the HUD to simulate a core flux discharge accompanied by procedural audio synthesis.
+- **Power Modulation**: Automatically accelerates rotation speed when J.A.R.V.I.S. is streaming tactical responses.
+
+### 🖥️ Hardware Telemetry Gauges
+- **Triple SVG Arcs**: Live meters tracking CPU load, RAM allocation, and disk space usage in real time.
+- **Automatic Diagnostics**: Run commands like *"System status"* to get detailed breakdown metrics directly from `psutil`.
+
+### 🔊 Procedural Audio Engine
+- Built directly on the native **Web Audio API** — requiring zero external audio assets, zero cloud latency, and 100% offline capability.
+- Procedural waveforms for boot sequences, tactical send chirps, incoming telemetry pings, tool execution pulses, and theme switches.
 
 ---
 
 ## 🏗️ Technical Architecture
 
 ```
-                               ┌─────────────────────────────┐
-                               │   MARK HUD (React 19 Vite)  │
-                               │  Arc Reactor · Audio Engine │
-                               │  Voice Transceiver (STT/TTS)│
-                               └──────────────┬──────────────┘
-                                              │ SSE Stream (HTTP/2)
-                                              ▼
-                               ┌─────────────────────────────┐
-                               │   FastAPI Server (Port 8000)│
-                               │   Session & Event Streaming │
-                               └──────────────┬──────────────┘
-                                              │
-                      ┌───────────────────────┴───────────────────────┐
-                      ▼                                               ▼
-      ┌───────────────────────────────┐               ┌──────────────────────────────┐
-      │     LangGraph ReAct Brain     │               │     11 Stark Tactical Tools  │
-      │  Groq Llama 3.3 70B Versatile │◄─────────────►│ Web · Wiki · Code · Hardware │
-      │  MemorySaver Session State    │               │ Weather · File System · Notes│
-      └───────────────────────────────┘               └──────────────────────────────┘
+                               ┌────────────────────────────────────────┐
+                               │     MARK HUD (React 19 + Vite)         │
+                               │  Arc Reactor · Procedural Synthesizer  │
+                               │  Vocal Transceiver · Theme Engine      │
+                               └──────────────────┬─────────────────────┘
+                                                  │ SSE Stream (HTTP/2)
+                                                  ▼
+                               ┌────────────────────────────────────────┐
+                               │   Singh Enterprises Gateway (FastAPI)  │
+                               │   Port 8000 · SSE Streaming Endpoints  │
+                               └──────────────────┬─────────────────────┘
+                                                  │
+                      ┌───────────────────────────┴───────────────────────────┐
+                      ▼                                                       ▼
+      ┌───────────────────────────────┐                       ┌──────────────────────────────┐
+      │     LangGraph ReAct Brain     │                       │   11 Tactical Capabilities   │
+      │  Groq Llama 3.3 70B Versatile │◄─────────────────────►│ Web · Wiki · Code · Hardware │
+      │  MemorySaver Session State    │                       │ Weather · File System · Notes│
+      └───────────────────────────────┘                       └──────────────────────────────┘
 ```
 
-### 📁 Directory Layout
+---
+
+## 📁 Classified Directory Layout
 
 ```
 jarvis/
-├── .env                       ← Stark clearance tokens (Groq API Key)
+├── .env                       ← Singh clearance tokens (Groq API Key)
 ├── start.sh                   ← One-click ignition sequence
 ├── main.py                    ← Root launcher script
-├── requirements.txt           ← Python core dependencies
-├── jarvis_notes.json          ← Long-term tactical memory storage
+├── requirements.txt           ← Python tactical dependencies
+├── jarvis_notes.json          ← Long-term tactical memory bank
 │
 ├── backend/                   ← Division 16 Engine
 │   ├── main.py                ← FastAPI application with SSE streaming
 │   ├── agent/
 │   │   ├── graph.py           ← LangGraph ReAct agent compiler
-│   │   ├── prompts.py         ← J.A.R.V.I.S. British persona & rules
+│   │   ├── prompts.py         ← J.A.R.V.I.S. British persona & protocol guidelines
 │   │   └── memory.py          ← Checkpointer session state
 │   └── tools/                 ← 11 modular tactical capabilities
 │       ├── calculator.py      ← High-precision arithmetic
@@ -123,12 +158,12 @@ jarvis/
     ├── index.html             ← Iron Man HUD container
     ├── src/
     │   ├── App.jsx            ← Core HUD orchestrator
-    │   ├── index.css          ← Stark cyan/gold glow & scanline optics
+    │   ├── index.css          ← Singh Enterprises cyan/gold glow & scanline optics
     │   ├── components/
     │   │   ├── ArcReactor.jsx     ← Interactive RT-IV Arc Core SVG
-    │   │   ├── BootSequence.jsx   ← Animated Stark OS initialization
+    │   │   ├── BootSequence.jsx   ← Animated OS initialization sequence
     │   │   ├── ChatInterface.jsx  ← Streaming telemetry communication
-    │   │   ├── StatusBar.jsx      ← Time, protocol selector & indicators
+    │   │   ├── StatusBar.jsx      ← Protocol selector, clock & indicators
     │   │   ├── SystemMonitor.jsx  ← Live CPU/RAM/Disk SVG gauges
     │   │   └── VoiceButton.jsx    ← Mic visualizer & speech controls
     │   └── utils/
@@ -139,15 +174,15 @@ jarvis/
 
 ## 🚀 Ignition Sequence (Quick Start)
 
-### Step 1: Supply the Arc Reactor Fuel (Groq API Key)
-J.A.R.V.I.S. requires an API key for Groq's high-speed LPU inference engine. Obtain one free of charge at [console.groq.com](https://console.groq.com).
+### Protocol 1: Fueling the Neural Core (Groq API Key)
+J.A.R.V.I.S. is powered by Groq's high-speed LPU inference engine. Obtain your free clearance key at [console.groq.com](https://console.groq.com).
 
-Configure your `.env` in the project root:
+Configure your `.env` file in the project root:
 ```bash
 GROQ_API_KEY=gsk_your_groq_api_key_here
 ```
 
-### Step 2: Run the Ignition Protocol
+### Protocol 2: Run the Ignition Protocol
 Execute the startup script to initialize the virtual environment, install dependencies, launch the FastAPI server, and deploy the Vite HUD:
 
 ```bash
@@ -155,7 +190,7 @@ chmod +x start.sh
 ./start.sh
 ```
 
-Once initialized, direct your browser to:
+Once initialized, open your tactical display at:
 ```
 http://localhost:5173
 ```
@@ -168,7 +203,7 @@ If you prefer initializing subsystems individually:
 
 ### Subsystem Alpha: FastAPI Backend
 ```bash
-# Activate Stark virtual environment
+# Activate Singh Enterprises virtual environment
 source venv/bin/activate
 
 # Navigate and boot backend engine
@@ -190,35 +225,35 @@ npm run dev
 
 ## 💬 Sample Tactical Orders
 
-Try issuing these orders to JARVIS in the HUD or via voice command:
+Try issuing these orders to J.A.R.V.I.S. in the HUD or via voice command:
 
 - 📊 **Diagnostics**: *"JARVIS, give me a full system breakdown on memory and processor usage."*
-- 🔬 **Calculation**: *"Compute the orbital velocity of a satellite at 400km altitude."*
+- 🔬 **Calculation**: *"Compute the escape velocity for Earth in meters per second."*
 - 🌐 **Reconnaissance**: *"Search for the latest research papers on room-temperature superconductors."*
-- 📝 **Intel Retention**: *"Take a note: Friday 1400 hours, Stark Expo presentation rehearsal."*
+- 📝 **Intel Retention**: *"Take a note: Friday 1400 hours, Singh Enterprises Expo presentation rehearsal."*
 - 🐍 **Code Sandbox**: *"Write and run a Python script that benchmarks primes up to 10,000."*
-- 🌦️ **Atmospheric**: *"Give me the weather and forecast for Malibu, California."*
+- 🌦️ **Atmospheric**: *"Give me the weather and forecast for Mumbai, India."*
 
 ---
 
-## 🔐 Stark Security Protocols
+## 🔐 Singh Security & Quarantine Protocols
 
-- **Code Quarantine**: Python execution takes place within a filtered local sub-process with resource boundaries.
-- **Local Sovereignty**: Conversation state and memory notes are maintained exclusively on your local workstation.
+- **Code Quarantine**: Python execution operates inside a restricted local sub-process with resource barriers.
+- **Local Sovereignty**: Conversation state and memory notes are stored strictly on your local device.
 - **Zero-Cloud Audio**: Speech recognition and procedural HUD sound effects execute 100% on the client device via standard browser Web APIs.
 
 ---
 
-## 📜 Stark Industries Disclaimer
+## 📜 Singh Enterprises Disclaimer
 
-> *"I told you. I don't want to join your super-secret boy band."*  
-> — **Tony Stark**
+> *"Sometimes you gotta run before you can walk."*  
+> — **Singh Enterprises Tactical Computing Division**
 
-*J.A.R.V.I.S. is an open-source homage inspired by the Marvel Cinematic Universe and Iron Man. Marvel, Iron Man, J.A.R.V.I.S., and Stark Industries are registered trademarks of Marvel Characters, Inc. and The Walt Disney Company.*
+*J.A.R.V.I.S. is an open-source homage inspired by the Marvel Cinematic Universe and Iron Man. Marvel, Iron Man, and J.A.R.V.I.S. are trademarks of Marvel Characters, Inc. and The Walt Disney Company.*
 
 <div align="center">
 
-**STARK INDUSTRIES · ADVANCED COMPUTING DIVISION**  
+**SINGH ENTERPRISES · ADVANCED COMPUTING DIVISION**  
 *All Systems Nominal. Good Day, Sir.*
 
 </div>
