@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Core radial glow -->
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+      <stop offset="25%" stop-color="#7df9ff" stop-opacity="0.95" />
+      <stop offset="55%" stop-color="#00d4ff" stop-opacity="0.8" />
+      <stop offset="85%" stop-color="#0066cc" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#002244" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Ring metallic gradient -->
+    <linearGradient id="metalRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="30%" stop-color="#0088cc" />
+      <stop offset="70%" stop-color="#003366" />
+      <stop offset="100%" stop-color="#00e5ff" />
+    </linearGradient>
+
+    <!-- Coil gradient -->
+    <linearGradient id="coilGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="40%" stop-color="#00d4ff" />
+      <stop offset="100%" stop-color="#004488" />
+    </linearGradient>
+
+    <!-- Outer glow filter -->
+    <filter id="arcGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="20" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Intense bloom -->
+    <filter id="coreBloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="bloom" />
+      <feMerge>
+        <feMergeNode in="bloom" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Dark Disc -->
+  <circle cx="256" cy="256" r="250" fill="#00060d" />
+
+  <!-- Outer HUD Ring & Ticks -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="#003b5c" stroke-width="2" opacity="0.6" />
+  <circle cx="256" cy="256" r="232" fill="none" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="6 8" opacity="0.5" />
+  <circle cx="256" cy="256" r="218" fill="none" stroke="#0088cc" stroke-width="3" opacity="0.4" />
+
+  <!-- Stator Outer Chasis Ring -->
+  <circle cx="256" cy="256" r="195" fill="none" stroke="url(#metalRing)" stroke-width="14" opacity="0.9" filter="url(#arcGlow)" />
+  <circle cx="256" cy="256" r="182" fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.7" />
+
+  <!-- 10 Arc Reactor Energy Coils -->
+  <g id="coils" filter="url(#arcGlow)">
+    <!-- 10 coils spaced at 36 deg -->
+    <g transform="translate(256, 256)">
+      <!-- 0 deg -->
+      <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      <!-- 36 deg -->
+      <g transform="rotate(36)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 72 deg -->
+      <g transform="rotate(72)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 108 deg -->
+      <g transform="rotate(108)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 144 deg -->
+      <g transform="rotate(144)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 180 deg -->
+      <g transform="rotate(180)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 216 deg -->
+      <g transform="rotate(216)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 252 deg -->
+      <g transform="rotate(252)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 288 deg -->
+      <g transform="rotate(288)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+      <!-- 324 deg -->
+      <g transform="rotate(324)">
+        <rect x="-14" y="-178" width="28" height="26" rx="4" fill="url(#coilGradient)" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Intermediate Guide Ring -->
+  <circle cx="256" cy="256" r="142" fill="none" stroke="#00e5ff" stroke-width="4" opacity="0.85" filter="url(#arcGlow)" />
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#003859" stroke-width="2" stroke-dasharray="12 6" />
+
+  <!-- Triangular Core Flange / Stator Mount -->
+  <g transform="translate(256, 256)" opacity="0.85">
+    <polygon points="0,-128 110.85,64 -110.85,64" fill="none" stroke="#00d4ff" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="0,128 110.85,-64 -110.85,-64" fill="none" stroke="#0088cc" stroke-width="2" stroke-linejoin="round" opacity="0.5" />
+    <!-- Center connecting nodes -->
+    <circle cx="0" cy="-128" r="5" fill="#00e5ff" />
+    <circle cx="110.85" cy="64" r="5" fill="#00e5ff" />
+    <circle cx="-110.85" cy="64" r="5" fill="#00e5ff" />
+  </g>
+
+  <!-- Inner High Energy Field Ring -->
+  <circle cx="256" cy="256" r="92" fill="#001828" stroke="#00d4ff" stroke-width="6" opacity="0.95" filter="url(#arcGlow)" />
+  <circle cx="256" cy="256" r="82" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.7" />
+
+  <!-- Core Plasma Unibeam Glow -->
+  <circle cx="256" cy="256" r="76" fill="url(#coreGlow)" filter="url(#coreBloom)" />
+  <circle cx="256" cy="256" r="42" fill="#ffffff" filter="url(#arcGlow)" opacity="0.95" />
+  <circle cx="256" cy="256" r="22" fill="#ffffff" />
+</svg>
