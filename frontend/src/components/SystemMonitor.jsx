@@ -58,13 +58,15 @@ function ArcMeter({ label, percent, used, total, unit }) {
   );
 }
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+
 export default function SystemMonitor() {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(false);
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:8000/system');
+      const res = await fetch(`${API_BASE_URL}/system`);
       if (!res.ok) throw new Error('Backend offline');
       const data = await res.json();
       setStats(data);

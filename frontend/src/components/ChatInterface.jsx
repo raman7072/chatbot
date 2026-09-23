@@ -16,6 +16,8 @@ const QUICK_COMMANDS = [
   { icon: '🗂️', label: 'List files', cmd: 'List all files in the current workspace directory' },
 ];
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+
 export default function ChatInterface({
   sessionId,
   onStreamingChange,
@@ -98,7 +100,7 @@ export default function ChatInterface({
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const res = await fetch('http://localhost:8000/chat', {
+      const res = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMsg, session_id: sessionId }),
