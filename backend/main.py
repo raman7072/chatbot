@@ -54,7 +54,7 @@ class HistoryRequest(BaseModel):
 
 # ── Endpoints ────────────────────────────────────────────────────────────────
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     """Health check endpoint."""
     return {
@@ -160,7 +160,7 @@ async def get_system_stats():
         raise HTTPException(status_code=500, detail=f"System stats error: {str(e)}")
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {
         "name": "JARVIS",
