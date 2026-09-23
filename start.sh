@@ -20,7 +20,7 @@ NC='\033[0m'
 
 echo -e "\n${CYAN}╔══════════════════════════════════════════════════╗"
 echo -e "║  J.A.R.V.I.S. — Singh Enterprises Tactical AI   ║"
-echo -e "║  Just A Rather Very Intelligent System (Div 16)  ║"
+echo -e "║  Just A Rather Very Intelligent System (Div 08)  ║"
 echo -e "╚══════════════════════════════════════════════════╝${NC}\n"
 
 # Check .env

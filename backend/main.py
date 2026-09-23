@@ -15,7 +15,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -31,15 +31,13 @@ app = FastAPI(
     version="1.0.0",
 )
 
-raw_origins = os.getenv("CORS_ORIGINS", "https://jarvis-alpha-ashen.vercel.app,http://localhost:5173,http://127.0.0.1:5173")
+raw_origins = os.getenv("CORS_ORIGINS", "https://jarvis-alpha-ashen.vercel.app")
 origins_list = [o.strip().rstrip("/") for o in raw_origins.split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(set(origins_list + [
         "https://jarvis-alpha-ashen.vercel.app",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
     ])),
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
@@ -79,6 +77,8 @@ async def chat_stream(request: ChatRequest):
     """
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
+    if len(request.message) > 4000:
+        raise HTTPException(status_code=400, detail="Message too long. Maximum 4000 characters.")
 
     async def event_generator():
         try:
@@ -139,29 +139,32 @@ async def get_system_stats():
         except Exception:
             pass
 
-        return {
-            "cpu": {
-                "percent": cpu_percent,
-                "cores": psutil.cpu_count(),
+        return JSONResponse(
+            content={
+                "cpu": {
+                    "percent": cpu_percent,
+                    "cores": psutil.cpu_count(),
+                },
+                "memory": {
+                    "total_gb": round(mem.total / 1e9, 1),
+                    "used_gb": round(mem.used / 1e9, 1),
+                    "percent": mem.percent,
+                },
+                "disk": {
+                    "total_gb": round(disk.total / 1e9, 1),
+                    "used_gb": round(disk.used / 1e9, 1),
+                    "percent": disk.percent,
+                },
+                "network": {
+                    "sent_mb": round(net.bytes_sent / 1e6, 1),
+                    "recv_mb": round(net.bytes_recv / 1e6, 1),
+                },
+                "uptime": f"{hours}h {mins}m",
+                "battery": battery,
+                "timestamp": datetime.now().isoformat(),
             },
-            "memory": {
-                "total_gb": round(mem.total / 1e9, 1),
-                "used_gb": round(mem.used / 1e9, 1),
-                "percent": mem.percent,
-            },
-            "disk": {
-                "total_gb": round(disk.total / 1e9, 1),
-                "used_gb": round(disk.used / 1e9, 1),
-                "percent": disk.percent,
-            },
-            "network": {
-                "sent_mb": round(net.bytes_sent / 1e6, 1),
-                "recv_mb": round(net.bytes_recv / 1e6, 1),
-            },
-            "uptime": f"{hours}h {mins}m",
-            "battery": battery,
-            "timestamp": datetime.now().isoformat(),
-        }
+            headers={"Cache-Control": "max-age=4, stale-while-revalidate=4"},
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"System stats error: {str(e)}")
 
@@ -171,7 +174,7 @@ async def root():
     return {
         "name": "JARVIS",
         "organization": "Singh Enterprises",
-        "division": "Division 16",
+        "division": "Division 08",
         "version": "1.0.0",
         "status": "All systems operational.",
         "quote": "Good day. How may I assist you, Sir?",

@@ -10,7 +10,7 @@
  ░░█████████   █████   █████  ░░████  ░░██████████  █████   █████ 
   ░░░░░░░░░    ░░░░░   ░░░░░   ░░░░    ░░░░░░░░░░   ░░░░░   ░░░░░ 
                [ JUST A RATHER VERY INTELLIGENT SYSTEM ]
-                  SINGH ENTERPRISES · DIVISION 16
+                  SINGH ENTERPRISES · DIVISION 08
 ```
 
 <div align="center">
@@ -22,7 +22,7 @@
 [![HUD Interface](https://img.shields.io/badge/HUD%20INTERFACE-REACT%2019%20+%20VITE-61dafb?style=for-the-badge&logo=react)](https://vitejs.dev)
 
 > *"Good day. I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. How may I assist you today, Sir?"*  
-> — **J.A.R.V.I.S. (Singh Enterprises Division 16)**
+> — **J.A.R.V.I.S. (Singh Enterprises Division 08)**
 
 </div>
 
@@ -138,7 +138,7 @@ jarvis/
 ├── requirements.txt           ← Python tactical dependencies
 ├── jarvis_notes.json          ← Long-term tactical memory bank
 │
-├── backend/                   ← Division 16 Engine
+├── backend/                   ← Division 08 Engine
 │   ├── main.py                ← FastAPI application with SSE streaming
 │   ├── agent/
 │   │   ├── graph.py           ← LangGraph ReAct agent compiler
