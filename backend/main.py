@@ -31,11 +31,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+raw_origins = os.getenv("CORS_ORIGINS", "https://jarvis-alpha-ashen.vercel.app,http://localhost:5173,http://127.0.0.1:5173")
+origins_list = [o.strip().rstrip("/") for o in raw_origins.split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS + ["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=list(set(origins_list + [
+        "https://jarvis-alpha-ashen.vercel.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ])),
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
