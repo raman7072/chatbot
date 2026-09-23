@@ -23,7 +23,7 @@ export default function App() {
     <>
       {/* Animated HUD background */}
       <div className="hud-bg" />
-      <div className="scanline" />
+      <div className="vignette" />
 
       {/* Boot sequence overlay */}
       {!booted && (

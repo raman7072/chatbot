@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { playBootSound } from '../utils/soundEffects';
 
 const BOOT_LINES = [
-  { text: '[ INIT ] J.A.R.V.I.S. v5.0 — Singh Enterprises Division 16 initializing...', type: '' },
+  { text: '[ INIT ] J.A.R.V.I.S. v5.0 — Singh Enterprises Division 08 initializing...', type: '' },
   { text: '[ OK   ] Neural network loaded: llama-3.3-70b-versatile', type: 'ok' },
   { text: '[ OK   ] LangGraph agent compiled — 11 tools registered', type: 'ok' },
   { text: '[ OK   ] Memory subsystem: MemorySaver online', type: 'ok' },
@@ -78,7 +78,7 @@ export default function BootSequence({ onComplete }) {
       <div style={{
         fontFamily: 'var(--font-mono)',
         fontSize: '10px',
-        color: 'rgba(0,212,255,0.4)',
+        color: 'rgba(56,189,248,0.38)',
         letterSpacing: '3px',
       }}>
         SINGH ENTERPRISES · SYSTEM BOOT · {progress}%

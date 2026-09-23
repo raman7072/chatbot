@@ -19,7 +19,7 @@ function ArcMeter({ label, percent, used, total, unit }) {
         <path
           d={`M ${strokeWidth} ${cy} A ${r} ${r} 0 0 1 ${size - strokeWidth} ${cy}`}
           fill="none"
-          stroke="rgba(0,212,255,0.1)"
+          stroke="rgba(56,189,248,0.1)"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
         />
@@ -96,14 +96,15 @@ export default function SystemMonitor() {
 
       {error ? (
         <div style={{
-          padding: '16px',
+          padding: '18px',
           fontFamily: 'var(--font-mono)',
           fontSize: '10px',
-          color: 'rgba(255,34,68,0.7)',
+          color: 'rgba(248,113,113,0.65)',
           textAlign: 'center',
+          lineHeight: 2,
         }}>
-          Backend offline<br />
-          <span style={{ color: 'rgba(0,212,255,0.3)' }}>Start: uvicorn backend.main:app</span>
+          ● BACKEND OFFLINE<br />
+          <span style={{ color: 'rgba(56,189,248,0.28)', fontSize: '9px' }}>Reconnecting...</span>
         </div>
       ) : stats ? (
         <>

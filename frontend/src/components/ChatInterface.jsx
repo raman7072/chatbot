@@ -12,7 +12,7 @@ const QUICK_COMMANDS = [
   { icon: '💻', label: 'System status', cmd: 'Run a full system diagnostic and report status' },
   { icon: '🌤️', label: 'Weather', cmd: 'What is the current weather and forecast for Tokyo?' },
   { icon: '🐍', label: 'Run Python', cmd: 'Write and execute Python code to calculate the first 10 prime numbers' },
-  { icon: '📝', label: 'Save note', cmd: 'Save a note titled "Arc Reactor Status" with content: Singh Enterprises Division 16 - Output at 100% capacity' },
+  { icon: '📝', label: 'Save note', cmd: 'Save a note titled "Arc Reactor Status" with content: Singh Enterprises Division 08 - Output at 100% capacity' },
   { icon: '🗂️', label: 'List files', cmd: 'List all files in the current workspace directory' },
 ];
 
@@ -49,7 +49,7 @@ export default function ChatInterface({
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: '*Singh Enterprises Division 16 — All systems online and operational.*\n\nGood day. I am **J.A.R.V.I.S.** — Just A Rather Very Intelligent System. How may I assist you today, Sir?\n\nI have full access to deep web search, Wikipedia archives, file operations, hardware diagnostics, sandboxed Python computation, meteorological data, and persistent tactical memory.',
+      content: '*Singh Enterprises Division 08 — All systems online and operational.*\n\nGood day. I am **J.A.R.V.I.S.** — Just A Rather Very Intelligent System. How may I assist you today, Sir?\n\nI have full access to deep web search, Wikipedia archives, file operations, hardware diagnostics, sandboxed Python computation, meteorological data, and persistent tactical memory.',
       timestamp: new Date(),
     }]);
   }, [sessionId]);
@@ -238,7 +238,7 @@ export default function ChatInterface({
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: '*Singh Enterprises Division 16 — Communication buffer cleared. All modules nominal.*\n\nHow may I assist you, Sir?',
+      content: '*Singh Enterprises Division 08 — Communication buffer cleared. All modules nominal.*\n\nHow may I assist you, Sir?',
       timestamp: new Date(),
     }]);
   }, [soundEnabled]);
@@ -246,7 +246,7 @@ export default function ChatInterface({
   const exportMissionLog = useCallback(() => {
     playClickSound(soundEnabled);
     let log = `# ⚡ J.A.R.V.I.S. MISSION TRANSCRIPT\n`;
-    log += `**Organization**: Singh Enterprises · Division 16\n`;
+    log += `**Organization**: Singh Enterprises · Division 08\n`;
     log += `**Session ID**: ${sessionId}\n`;
     log += `**Exported At**: ${new Date().toISOString()}\n\n---\n\n`;
 
@@ -426,9 +426,9 @@ function ToolTrace({ tools }) {
   return (
     <div style={{
       margin: '6px 0 10px 0',
-      border: '1px solid rgba(0, 212, 255, 0.25)',
-      background: 'rgba(0, 20, 35, 0.6)',
-      borderRadius: '4px',
+      border: '1px solid rgba(56, 189, 248, 0.2)',
+      background: 'rgba(8, 18, 36, 0.6)',
+      borderRadius: '8px',
       overflow: 'hidden',
       fontSize: '11px',
       fontFamily: 'var(--font-mono)',
@@ -436,8 +436,8 @@ function ToolTrace({ tools }) {
       <div
         onClick={() => setOpen(!open)}
         style={{
-          padding: '6px 10px',
-          background: 'rgba(0, 212, 255, 0.08)',
+          padding: '6px 12px',
+          background: 'rgba(56, 189, 248, 0.07)',
           cursor: 'pointer',
           display: 'flex',
           justifyContent: 'space-between',
@@ -474,7 +474,7 @@ function ToolTrace({ tools }) {
                 </div>
               )}
               {t.output && (
-                <div style={{ color: 'rgba(0, 255, 136, 0.85)', marginTop: '3px', wordBreak: 'break-word', maxHeight: '120px', overflowY: 'auto' }}>
+                <div style={{ color: 'rgba(125, 211, 252, 0.8)', marginTop: '3px', wordBreak: 'break-word', maxHeight: '120px', overflowY: 'auto' }}>
                   <span style={{ color: 'var(--cyan)' }}>Output:</span> {t.output}
                 </div>
               )}
@@ -494,11 +494,12 @@ function CodeBlock({ inline, className, children, ...props }) {
   if (inline) {
     return (
       <code className={className} style={{
-        background: 'rgba(0, 212, 255, 0.12)',
-        padding: '2px 5px',
-        borderRadius: '3px',
+        background: 'rgba(56, 189, 248, 0.1)',
+        padding: '2px 6px',
+        borderRadius: '4px',
         fontFamily: 'var(--font-mono)',
-        color: 'var(--cyan)',
+        color: '#7dd3fc',
+        fontSize: '12.5px',
       }} {...props}>
         {children}
       </code>
@@ -515,20 +516,21 @@ function CodeBlock({ inline, className, children, ...props }) {
     <div style={{
       position: 'relative',
       margin: '10px 0',
-      background: 'rgba(0, 12, 24, 0.9)',
-      border: '1px solid rgba(0, 212, 255, 0.3)',
-      borderRadius: '4px',
+      background: 'rgba(3, 7, 18, 0.85)',
+      border: '1px solid rgba(56, 189, 248, 0.2)',
+      borderRadius: '8px',
       overflow: 'hidden',
     }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '4px 10px',
-        background: 'rgba(0, 212, 255, 0.08)',
-        fontSize: '10px',
+        padding: '5px 12px',
+        background: 'rgba(56, 189, 248, 0.06)',
+        fontSize: '9.5px',
         fontFamily: 'var(--font-mono)',
-        color: 'var(--cyan)',
+        color: 'rgba(56, 189, 248, 0.6)',
+        borderBottom: '1px solid rgba(56, 189, 248, 0.08)',
       }}>
         <span>{match ? match[1].toUpperCase() : 'CODE'}</span>
         <button
@@ -609,7 +611,10 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
           ) : msg.streaming ? (
             <div className="tool-indicator">
               <div className="tool-spinner" />
-              Processing...
+              <span>Thinking</span>
+              <span className="typing-dots">
+                <span /><span /><span />
+              </span>
             </div>
           ) : null}
 
