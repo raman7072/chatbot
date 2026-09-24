@@ -14,11 +14,11 @@ except ImportError:
 from langgraph.checkpoint.memory import MemorySaver
 
 try:
-    from .prompts import JARVIS_SYSTEM_PROMPT
+    from .prompts import JARVIS_SYSTEM_PROMPT, get_persona_prompt
     from ..tools import ALL_TOOLS
 except ImportError:
     # Running as top-level module (uvicorn main:app from backend/ dir)
-    from agent.prompts import JARVIS_SYSTEM_PROMPT
+    from agent.prompts import JARVIS_SYSTEM_PROMPT, get_persona_prompt
     from tools import ALL_TOOLS
 
 load_dotenv()
@@ -40,40 +40,44 @@ def _create_llm() -> ChatGroq:
     )
 
 
-# Global agent instance with persistent in-memory checkpointer
+# Agent registry with persistent in-memory checkpointer
 _llm = None
-_agent = None
+_agents = {}
 _memory = MemorySaver()
 
 
-def get_agent():
-    """Get or create the JARVIS agent (singleton)."""
-    global _llm, _agent
-    if _agent is None:
-        _llm = _create_llm()
+def get_agent(persona: str = "jarvis"):
+    """Get or create agent instance for specified persona."""
+    global _llm, _agents
+    persona_key = (persona or "jarvis").lower()
+    if persona_key not in _agents:
+        if _llm is None:
+            _llm = _create_llm()
+        system_prompt = get_persona_prompt(persona_key)
         if HAS_CREATE_AGENT:
-            _agent = create_agent(
+            _agents[persona_key] = create_agent(
                 model=_llm,
                 tools=ALL_TOOLS,
                 checkpointer=_memory,
-                system_prompt=JARVIS_SYSTEM_PROMPT,
+                system_prompt=system_prompt,
             )
         else:
-            _agent = create_react_agent(
+            _agents[persona_key] = create_react_agent(
                 model=_llm,
                 tools=ALL_TOOLS,
                 checkpointer=_memory,
-                prompt=JARVIS_SYSTEM_PROMPT,
+                prompt=system_prompt,
             )
-    return _agent
+    return _agents[persona_key]
 
 
 async def stream_agent_response(
     message: str,
     session_id: str = "default",
+    persona: str = "jarvis",
 ) -> AsyncGenerator[dict[str, Any], None]:
     """
-    Stream JARVIS's response token by token.
+    Stream AI response token by token for the requested persona.
 
     Yields dicts with keys:
       - type: "token" | "tool_start" | "tool_end" | "error" | "done"
@@ -81,7 +85,7 @@ async def stream_agent_response(
       - tool: name of tool (for tool events)
       - input / output: metadata for tool call
     """
-    agent = get_agent()
+    agent = get_agent(persona)
     config = {
         "configurable": {"thread_id": session_id},
         "recursion_limit": 25,
