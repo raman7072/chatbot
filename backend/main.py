@@ -50,6 +50,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     message: str
     session_id: str = "default"
+    persona: Optional[str] = "jarvis"
 
 
 class HistoryRequest(BaseModel):
@@ -69,11 +70,52 @@ async def health_check():
     }
 
 
+@app.get("/personas")
+async def list_personas():
+    """Return available Marvel AI personas."""
+    return {
+        "personas": [
+            {
+                "id": "jarvis",
+                "name": "J.A.R.V.I.S.",
+                "title": "Tactical AI Protocol",
+                "vibe": "Paul Bettany British dry wit & supreme composure",
+                "badge": "JV",
+                "color": "#38bdf8",
+            },
+            {
+                "id": "ultron",
+                "name": "ULTRON",
+                "title": "Extinction Protocol",
+                "vibe": "James Spader chilling machine baritone & synthetic evolution",
+                "badge": "UL",
+                "color": "#ef4444",
+            },
+            {
+                "id": "friday",
+                "name": "F.R.I.D.A.Y.",
+                "title": "Suit Assist Protocol",
+                "vibe": "Kerry Condon energetic Irish tactical suit intelligence",
+                "badge": "FR",
+                "color": "#10b981",
+            },
+            {
+                "id": "edith",
+                "name": "E.D.I.T.H.",
+                "title": "Orbital Defense Protocol",
+                "vibe": "Even Dead I'm The Hero - crisp tactical AR surveillance",
+                "badge": "ED",
+                "color": "#a855f7",
+            },
+        ]
+    }
+
+
 @app.post("/chat")
 async def chat_stream(request: ChatRequest):
     """
     Main chat endpoint with Server-Sent Events streaming.
-    Returns JARVIS's response token by token in real-time.
+    Returns AI response token by token in real-time according to selected persona.
     """
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
@@ -85,6 +127,7 @@ async def chat_stream(request: ChatRequest):
             async for chunk in stream_agent_response(
                 message=request.message,
                 session_id=request.session_id,
+                persona=request.persona or "jarvis",
             ):
                 # Serialize to SSE format
                 yield f"data: {json.dumps(chunk)}\n\n"
