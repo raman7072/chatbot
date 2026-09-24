@@ -4,7 +4,7 @@ import PersonaSelector from './PersonaSelector';
 import { PERSONAS } from '../utils/marvelVoice';
 import { useAuth } from '../context/AuthContext';
 
-const ARMOR_PROTOCOLS = [
+export const ARMOR_PROTOCOLS = [
   { id: 'mark-iv', name: 'MARK IV', desc: 'Arc Cyan', color: '#00d4ff' },
   { id: 'mark-vii', name: 'MARK VII', desc: 'Gold Titanium & Red', color: '#ffb800' },
   { id: 'stealth', name: 'STEALTH OPS', desc: 'Tactical Emerald', color: '#00ffaa' },

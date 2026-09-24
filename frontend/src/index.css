@@ -937,9 +937,9 @@ body {
 .mobile-hud-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(3,7,18,0.78);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(3,7,18,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -952,25 +952,29 @@ body {
 }
 .mobile-hud-drawer {
   width: 100%;
-  max-width: 640px;
-  max-height: 86vh;
-  max-height: 86dvh;
-  background: rgba(5,10,20,0.97);
+  max-width: 580px;
+  height: 85vh;
+  height: 85dvh;
+  max-height: 85vh;
+  max-height: 85dvh;
+  background: rgba(4, 9, 20, 0.98);
   border: var(--border-cyan);
   border-bottom: none;
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.85), var(--glow-cyan-soft);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.95), var(--glow-cyan-soft);
   display: flex;
   flex-direction: column;
   animation: drawer-slide-up 0.26s cubic-bezier(0.22, 1, 0.36, 1);
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
   overflow: hidden;
+  box-sizing: border-box;
 }
 @keyframes drawer-slide-up {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
 .mobile-hud-header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -979,6 +983,8 @@ body {
   font-family: var(--font-hud);
   font-size: 11px;
   letter-spacing: 2px;
+  background: rgba(4, 9, 20, 0.98);
+  z-index: 10;
 }
 .mobile-hud-header-title {
   display: flex;
@@ -1004,21 +1010,30 @@ body {
   border-color: var(--red-alert);
 }
 .mobile-hud-content {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   -webkit-overflow-scrolling: touch;
 }
+.mobile-hud-content > * {
+  flex-shrink: 0;
+}
 .mobile-hud-footer {
+  flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: 9px;
   color: rgba(56,189,248,0.4);
   text-align: center;
   letter-spacing: 1.5px;
-  padding: 6px 0 2px;
+  padding: 8px 0 4px;
   border-top: var(--border-dim);
+  background: rgba(4, 9, 20, 0.98);
+  z-index: 10;
 }
 
 /* ================================================================
@@ -1354,23 +1369,23 @@ body {
     --topbar-h: 52px;
   }
   .topbar {
-    padding: 0 10px;
-    height: var(--topbar-h);
+    padding: env(safe-area-inset-top, 0px) 10px 0;
+    height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
   }
   .topbar-center {
     display: none;
   }
   .logo-icon {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
   }
   .logo-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
   }
   .logo-text {
-    font-size: 15px;
-    letter-spacing: 2px;
+    font-size: 14px;
+    letter-spacing: 1.5px;
   }
   .persona-inline-tag {
     font-size: 7px;
@@ -1380,29 +1395,71 @@ body {
     display: none;
   }
   .topbar-right {
-    gap: 5px;
+    gap: 4px;
+    flex-shrink: 0;
+    align-items: center;
   }
   .hud-btn {
-    padding: 4px 8px;
-    font-size: 7.5px;
-    letter-spacing: 0.6px;
+    padding: 4px 7px;
+    font-size: 8px;
+    letter-spacing: 0.5px;
     min-height: 32px;
+    white-space: nowrap;
   }
+
+  /* Hide desktop keyboard shortcut button on mobile */
+  #cmd-palette-btn {
+    display: none !important;
+  }
+
+  /* Compact profile button: hide username text, show avatar circle */
+  .topbar-user-name {
+    display: none !important;
+  }
+  .profile-chip-btn {
+    padding: 4px 6px !important;
+    gap: 0 !important;
+  }
+  .topbar-user-avatar {
+    width: 20px;
+    height: 20px;
+    font-size: 8px;
+  }
+
+  /* Compact login button on mobile */
+  .topbar-login-text {
+    display: none !important;
+  }
+
+  /* Persona selector compact sizing */
   .persona-btn {
-    padding: 4px 8px;
+    padding: 4px 7px;
     gap: 4px;
   }
   .persona-name {
-    font-size: 10px;
+    font-size: 9.5px;
   }
   .persona-avatar-badge {
     width: 16px;
     height: 16px;
     font-size: 7px;
   }
-  .persona-dropdown {
-    width: 275px;
-    right: -10px;
+
+  /* Fixed full-width dropdown menus on mobile (prevents horizontal overflow) */
+  .persona-dropdown,
+  .theme-dropdown,
+  .missions-dropdown {
+    position: fixed !important;
+    top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 6px) !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: 75vh !important;
+    max-height: 75dvh !important;
+    overflow-y: auto !important;
+    z-index: 1000 !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(0, 240, 255, 0.25) !important;
   }
 
   /* Chat Panel Edge-to-Edge on Mobile */
@@ -1413,33 +1470,93 @@ body {
     border-right: none;
     border-bottom: none;
   }
+
+  /* Streamlined chat panel header */
+  .chat-panel .panel-header {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .chat-panel .panel-header-left {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 8.5px;
+    letter-spacing: 0.8px;
+  }
+  .panel-header-actions {
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  .history-synced-tag,
+  .history-guest-tag {
+    font-size: 7.5px !important;
+    padding: 2px 5px !important;
+  }
+  .panel-action-btn {
+    padding: 3px 7px !important;
+    font-size: 8px !important;
+  }
+
   .messages-container {
-    padding: 12px 8px;
-    gap: 14px;
+    padding: 10px 8px;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
   }
   .message {
-    gap: 8px;
+    gap: 7px;
   }
   .msg-avatar {
-    width: 26px;
-    height: 26px;
-    font-size: 8px;
+    width: 24px;
+    height: 24px;
+    font-size: 7.5px;
+    margin-top: 1px;
   }
   .msg-body {
-    max-width: 90%;
+    max-width: calc(100% - 32px);
+    min-width: 0;
+  }
+  .msg-meta {
+    font-size: 9px;
+    margin-bottom: 3px;
   }
   .msg-bubble {
     font-size: 13.5px;
-    padding: 9px 12px;
-    line-height: 1.55;
+    padding: 8px 11px;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   .msg-bubble pre {
-    padding: 10px 12px;
+    padding: 8px 10px;
     margin: 6px 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .msg-bubble table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-collapse: collapse;
+    margin: 8px 0;
+  }
+  .msg-bubble th,
+  .msg-bubble td {
+    padding: 6px 8px;
+    font-size: 12px;
   }
   .msg-actions {
     margin-top: 6px;
-    padding-top: 6px;
+    padding-top: 5px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .msg-action-btn {
+    padding: 3px 7px;
+    font-size: 9px;
   }
   .action-btn-label {
     display: none;
@@ -1447,11 +1564,23 @@ body {
 
   /* Quick chips horizontal tray */
   .quick-chips-wrapper {
-    padding: 2px 10px 6px;
+    padding: 3px 8px 6px;
+  }
+  .quick-chips-header {
+    margin-bottom: 3px;
+  }
+  .quick-chips-scroll {
+    gap: 6px;
+    padding: 2px 0 4px;
+    -webkit-overflow-scrolling: touch;
   }
   .quick-chip {
-    padding: 4px 10px;
-    font-size: 10px;
+    padding: 4px 8px;
+    font-size: 9.5px;
+    flex-shrink: 0;
+  }
+  .quick-chip-icon {
+    font-size: 11px;
   }
 
   /* Chat Input on Mobile: 16px font prevents iOS Safari auto-zoom */
@@ -1459,14 +1588,14 @@ body {
     padding: 6px 8px max(8px, env(safe-area-inset-bottom, 8px));
   }
   .input-wrapper {
-    padding: 6px 10px;
+    padding: 6px 8px;
     gap: 6px;
     border-radius: 20px;
   }
   .chat-input {
     font-size: 16px; /* Essential to prevent iOS viewport distortion */
     min-height: 24px;
-    max-height: 100px;
+    max-height: 90px;
     line-height: 1.4;
   }
   .voice-btn, .send-btn {
@@ -1499,30 +1628,48 @@ body {
   }
 }
 
+/* ── Small Mobile Phones (max-width: 520px) ── */
+@media (max-width: 520px) {
+  /* On small phones, hide secondary theme & missions dropdown triggers from topbar
+     (accessible directly via Mobile HUD Drawer and Profile) */
+  .missions-selector-container {
+    display: none !important;
+  }
+  .sound-btn-mobile {
+    font-size: 11px;
+  }
+}
+
 /* ── Ultra-compact phones (iPhone SE, Galaxy Fold: max-width: 380px) ── */
 @media (max-width: 380px) {
   .topbar {
-    padding: 0 6px;
+    padding: env(safe-area-inset-top, 0px) 6px 0;
+  }
+  .logo-text {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .persona-inline-tag {
+    display: none;
   }
   .topbar-right {
-    gap: 3px;
+    gap: 2px;
   }
   .hud-btn {
-    padding: 3px 6px;
-    font-size: 7px;
+    padding: 3px 5px;
+    font-size: 7.5px;
+  }
+  .theme-selector-container {
+    display: none !important;
   }
   .persona-btn {
     padding: 3px 5px;
   }
   .persona-name {
-    font-size: 9px;
-  }
-  .persona-dropdown {
-    width: 250px;
-    right: -20px;
+    font-size: 8.5px;
   }
   .msg-body {
-    max-width: 94%;
+    max-width: calc(100% - 28px);
   }
 }
 

@@ -175,10 +175,13 @@ export default function JarvisApp() {
             onClose={() => setMobileTelemetryOpen(false)}
             streaming={streaming}
             soundEnabled={soundEnabled}
+            onToggleSound={() => setSoundEnabled(prev => !prev)}
             currentPersona={currentPersona}
             onSelectPersona={handleSelectPersona}
             quickCommands={QUICK_COMMANDS}
             onRunQuickCommand={handleRunQuickCommand}
+            onNavigateProfile={() => navigate('/profile')}
+            isAuthenticated={isAuthenticated}
           />
         </div>
       )}
