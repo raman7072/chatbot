@@ -1,0 +1,22 @@
+{
+  "3e4aa6867d6cd7d360cb5e98": [],
+  "demo_stark_id": [
+    {
+      "session_id": "test_mission_001",
+      "persona": "jarvis",
+      "title": "Run diagnostic scan on suit telemetry.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Run diagnostic scan on suit telemetry."
+        },
+        {
+          "role": "assistant",
+          "content": "All suit systems nominal, Commander Stark."
+        }
+      ],
+      "created_at": 1790232852.9930232,
+      "updated_at": 1790232852.9930258
+    }
+  ]
+}

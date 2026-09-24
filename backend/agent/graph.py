@@ -75,6 +75,7 @@ async def stream_agent_response(
     message: str,
     session_id: str = "default",
     persona: str = "jarvis",
+    user_name: Optional[str] = None,
 ) -> AsyncGenerator[dict[str, Any], None]:
     """
     Stream AI response token by token for the requested persona.
@@ -90,7 +91,8 @@ async def stream_agent_response(
         "configurable": {"thread_id": session_id},
         "recursion_limit": 25,
     }
-    input_messages = {"messages": [HumanMessage(content=message)]}
+    content = f"[Transmission from Commander {user_name}]: {message}" if user_name else message
+    input_messages = {"messages": [HumanMessage(content=content)]}
 
     try:
         async for event in agent.astream_events(

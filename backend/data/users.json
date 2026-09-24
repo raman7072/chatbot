@@ -1,0 +1,50 @@
+{
+  "3e4aa6867d6cd7d360cb5e98": {
+    "id": "3e4aa6867d6cd7d360cb5e98",
+    "username": "commander_singh",
+    "email": "singh@enterprises.com",
+    "full_name": "Commander Alex Singh",
+    "password_hash": "9b47b320b56dcd8a7cc9fb5388cd8e5a:RcY5CpMmAY98qivEjI2oA9IioF8CL4lAIM7Wt7Q3q8Q=",
+    "avatar_initials": "CO",
+    "preferred_persona": "friday",
+    "preferred_theme": "stealth",
+    "created_at": 1790230130.4098303,
+    "last_login": 1790230130.4098303
+  },
+  "1097102449983b8d57adf0e0": {
+    "id": "1097102449983b8d57adf0e0",
+    "username": "admin",
+    "email": "admin@admin.in",
+    "full_name": "admin",
+    "password_hash": "b8945d87cd2641e986726fbafa71ee50:9WmK3FbwWBV93+IN5g6KKKQ7zmBXKbP8SrmLaQ9D17U=",
+    "avatar_initials": "AD",
+    "preferred_persona": "jarvis",
+    "preferred_theme": "mark-iv",
+    "created_at": 1790231663.5381005,
+    "last_login": 1790231663.5381005
+  },
+  "87a40f680604f01622128625": {
+    "id": "87a40f680604f01622128625",
+    "username": "commander_alex",
+    "email": "alex@singh.com",
+    "full_name": "Commander Alex",
+    "password_hash": "dd1b35ce9d44e741b2954e4b95be3581:qpQANmQGKCGv3/oABHbCgnJHfLstbtXnhUKIRHTylfY=",
+    "avatar_initials": "CO",
+    "preferred_persona": "jarvis",
+    "preferred_theme": "mark-iv",
+    "created_at": 1790231752.7681906,
+    "last_login": 1790231752.7681906
+  },
+  "demo_stark_id": {
+    "id": "demo_stark_id",
+    "username": "demo",
+    "email": "demo@singhenterprises.com",
+    "full_name": "Tony Stark",
+    "password_hash": "5bc091817c4bb3705d1eb8716f24390f:ZWBHrmONxlLu+yAQhyLWA++uLZ7mitUXFiCQGASK1Vg=",
+    "avatar_initials": "TS",
+    "preferred_persona": "jarvis",
+    "preferred_theme": "mark-iv",
+    "created_at": 1790232423.1955233,
+    "last_login": 1790232862.6853478
+  }
+}
