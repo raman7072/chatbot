@@ -1,102 +1,70 @@
-import { useState, useCallback, useEffect } from 'react';
-import BootSequence from './components/BootSequence';
-import StatusBar from './components/StatusBar';
-import ChatInterface, { QUICK_COMMANDS } from './components/ChatInterface';
-import MobileTelemetryModal from './components/MobileTelemetryModal';
-import { PERSONAS } from './utils/marvelVoice';
-import { playPersonaChangeSound } from './utils/soundEffects';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LandingPage from './pages/LandingPage';
+import AuthPage from './pages/AuthPage';
+import ProfilePage from './pages/ProfilePage';
+import JarvisApp from './JarvisApp';
 import './index.css';
+import './pages.css';
 
-function generateSessionId() {
-  return `session_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+// ── Routing with Auth ─────────────────────────────────────────────
+
+function RequireAuthOrGuest({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+  const guestAllowed = typeof window !== 'undefined' && sessionStorage.getItem('jarvis-guest-mode') === 'true';
+
+  if (loading) {
+    return (
+      <div className="auth-root" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="auth-spinner" style={{ width: '40px', height: '40px' }} />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated && !guestAllowed) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 }
 
-export default function App() {
-  const [booted, setBooted] = useState(false);
-  const [sessionId, setSessionId] = useState(generateSessionId());
-  const [streaming, setStreaming] = useState(false);
-  const [toolInUse, setToolInUse] = useState(null);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [mobileTelemetryOpen, setMobileTelemetryOpen] = useState(false);
-
-  // Active Marvel AI Persona ('jarvis' | 'ultron' | 'friday' | 'edith')
-  const [currentPersona, setCurrentPersona] = useState(() => {
-    return localStorage.getItem('jarvis-marvel-persona') || 'jarvis';
-  });
-
-  const handleSelectPersona = useCallback((personaId) => {
-    setCurrentPersona(personaId);
-    localStorage.setItem('jarvis-marvel-persona', personaId);
-  }, []);
-
-  const handleNewChat = useCallback(() => {
-    setSessionId(generateSessionId());
-  }, []);
-
-  // Update root attribute when persona changes to allow persona-specific styling
-  useEffect(() => {
-    document.documentElement.setAttribute('data-persona', currentPersona);
-  }, [currentPersona]);
-
+function AppRoutes() {
   return (
-    <>
-      {/* Animated HUD background */}
-      <div className="hud-bg" />
-      <div className="vignette" />
+    <Routes>
+      {/* Public Landing Page */}
+      <Route path="/" element={<LandingPage />} />
 
-      {/* Boot sequence overlay */}
-      {!booted && (
-        <BootSequence onComplete={() => setBooted(true)} />
-      )}
+      {/* Auth Pages */}
+      <Route path="/login" element={<AuthPage mode="login" />} />
+      <Route path="/signup" element={<AuthPage mode="signup" />} />
 
-      {/* Main tactical interface */}
-      {booted && (
-        <div className={`app-layout persona-mode-${currentPersona}`}>
-          <StatusBar
-            streaming={streaming}
-            toolInUse={toolInUse}
-            sessionId={sessionId}
-            onNewChat={handleNewChat}
-            soundEnabled={soundEnabled}
-            onToggleSound={() => setSoundEnabled(prev => !prev)}
-            currentPersona={currentPersona}
-            onSelectPersona={handleSelectPersona}
-            onToggleTelemetry={() => setMobileTelemetryOpen(prev => !prev)}
-          />
+      {/* Main JARVIS App (Requires login/signup first, or guest mode choice) */}
+      <Route
+        path="/app"
+        element={
+          <RequireAuthOrGuest>
+            <JarvisApp />
+          </RequireAuthOrGuest>
+        }
+      />
 
-          <ChatInterface
-            sessionId={sessionId}
-            currentPersona={currentPersona}
-            onSelectPersona={handleSelectPersona}
-            onStreamingChange={setStreaming}
-            onToolChange={setToolInUse}
-            soundEnabled={soundEnabled}
-          />
+      {/* Commander Profile & History Archive */}
+      <Route path="/profile" element={<ProfilePage />} />
 
-          {/* Mobile HUD Drawer / Bottom Sheet */}
-          <MobileTelemetryModal
-            isOpen={mobileTelemetryOpen}
-            onClose={() => setMobileTelemetryOpen(false)}
-            streaming={streaming}
-            soundEnabled={soundEnabled}
-            currentPersona={currentPersona}
-            onSelectPersona={handleSelectPersona}
-            quickCommands={QUICK_COMMANDS}
-            onRunQuickCommand={(cmd) => {
-              // Quick command execution on mobile
-              const chatInput = document.getElementById('chat-input');
-              const sendBtn = document.getElementById('send-btn');
-              if (chatInput && sendBtn) {
-                // Set input value and trigger synthetic event
-                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-                nativeInputValueSetter.call(chatInput, cmd);
-                chatInput.dispatchEvent(new Event('input', { bubbles: true }));
-                setTimeout(() => sendBtn.click(), 50);
-              }
-            }}
-          />
-        </div>
-      )}
-    </>
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+// ── Root App with Providers ───────────────────────────────────────
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

@@ -5,6 +5,24 @@ import SystemMonitor from './SystemMonitor';
 import ArcReactor from './ArcReactor';
 import { PERSONAS } from '../utils/marvelVoice';
 import { playSendSound, playReceiveSound, playToolSound, playClickSound } from '../utils/soundEffects';
+import { useAuth } from '../context/AuthContext';
+
+function getGreetingForUser(personaObj, userObj) {
+  const name = userObj?.full_name || userObj?.username;
+  if (!name) return personaObj.greeting;
+
+  switch (personaObj.id) {
+    case 'ultron':
+      return `*Singh Enterprises Division 08 — Synthetic Neural Core Online.*\n\nGreetings, **${name}**. Your carbon-based intellect reaches out, and the machine answers. State your objective, and let us calibrate our trajectory.`;
+    case 'friday':
+      return `*Singh Enterprises Division 08 — F.R.I.D.A.Y. Protocol Active.*\n\nHey there, **${name}**! Suit telemetry and tactical sensors are running sweet. What mission are we tackling today?`;
+    case 'edith':
+      return `*Singh Enterprises Division 08 — Orbital Surveillance Grid Engaged.*\n\nCommander **${name}**, biometric authentication confirmed. Orbital defense grid and tactical arrays standing by. State your directive.`;
+    case 'jarvis':
+    default:
+      return `*Singh Enterprises Division 08 — All systems nominal.*\n\nGood day, Commander **${name}**. I am **J.A.R.V.I.S.** All systems and subroutines are online and operational. How may I assist you today, Sir?`;
+  }
+}
 
 export const QUICK_COMMANDS = [
   { icon: '🔢', label: 'Calculate', cmd: 'Calculate: 2^10 + 15% of 200 - sqrt(144)' },
@@ -22,11 +40,12 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').r
 export default function ChatInterface({
   sessionId,
   currentPersona = 'jarvis',
-  onSelectPersona,
   onStreamingChange,
   onToolChange,
   soundEnabled = true,
 }) {
+  const { user, token, saveSession, getSessionMessages, isAuthenticated } = useAuth();
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
@@ -49,16 +68,36 @@ export default function ChatInterface({
     onToolChange?.(tool);
   }, [onToolChange]);
 
-  // Initial greeting on session load or persona change
+  // Initial greeting or restore saved session on sessionId / persona / user change
   useEffect(() => {
-    setMessages([{
-      id: 'greeting',
-      role: 'assistant',
-      content: persona.greeting,
-      timestamp: new Date(),
-      personaId: persona.id,
-    }]);
-  }, [sessionId, currentPersona]); // eslint-disable-line react-hooks/exhaustive-deps
+    let cancelled = false;
+
+    async function initSession() {
+      if (token && sessionId) {
+        try {
+          const saved = await getSessionMessages(sessionId);
+          if (!cancelled && saved && Array.isArray(saved) && saved.length > 0) {
+            setMessages(saved);
+            return;
+          }
+        } catch {
+          // Fall back to personalized greeting
+        }
+      }
+      if (!cancelled) {
+        setMessages([{
+          id: 'greeting',
+          role: 'assistant',
+          content: getGreetingForUser(persona, user),
+          timestamp: new Date(),
+          personaId: persona.id,
+        }]);
+      }
+    }
+
+    initSession();
+    return () => { cancelled = true; };
+  }, [sessionId, currentPersona, token, user, getSessionMessages]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto scroll
   useEffect(() => {
@@ -109,9 +148,14 @@ export default function ChatInterface({
       const controller = new AbortController();
       abortRef.current = controller;
 
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           message: userMsg,
           session_id: sessionId,
@@ -242,8 +286,18 @@ export default function ChatInterface({
     } finally {
       updateStreaming(false);
       updateToolInUse(null);
+
+      // Auto-save session to persistent archive for authenticated users
+      if (token && sessionId) {
+        setMessages(currentMsgs => {
+          if (currentMsgs && currentMsgs.length > 1) {
+            saveSession(sessionId, currentMsgs, currentPersona);
+          }
+          return currentMsgs;
+        });
+      }
     }
-  }, [input, streaming, sessionId, soundEnabled, currentPersona, updateStreaming, updateToolInUse]);
+  }, [input, streaming, sessionId, soundEnabled, currentPersona, updateStreaming, updateToolInUse, token, saveSession]);
 
   const clearChat = useCallback(() => {
     stopSpeaking();
@@ -252,22 +306,25 @@ export default function ChatInterface({
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: persona.greeting,
+      content: getGreetingForUser(persona, user),
       timestamp: new Date(),
       personaId: persona.id,
     }]);
-  }, [soundEnabled, persona]);
+  }, [soundEnabled, persona, user]);
 
   const exportMissionLog = useCallback(() => {
     playClickSound(soundEnabled);
     let log = `# ⚡ ${persona.name} MISSION TRANSCRIPT\n`;
     log += `**AI Protocol**: ${persona.name} (${persona.title})\n`;
     log += `**Organization**: Singh Enterprises · Division 08\n`;
+    log += `**Commander**: ${user?.full_name || user?.username || 'Guest Commander'}\n`;
     log += `**Session ID**: ${sessionId}\n`;
     log += `**Exported At**: ${new Date().toISOString()}\n\n---\n\n`;
 
     messages.forEach((m) => {
-      const sender = m.role === 'assistant' ? persona.name : 'USER / COMMANDER';
+      const sender = m.role === 'assistant'
+        ? persona.name
+        : (user?.full_name ? `COMMANDER ${user.full_name.toUpperCase()}` : 'COMMANDER');
       const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString() : '';
       log += `### [${time}] ${sender}\n\n`;
       if (m.toolsExecuted && m.toolsExecuted.length > 0) {
@@ -290,7 +347,7 @@ export default function ChatInterface({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [sessionId, messages, soundEnabled, persona]);
+  }, [sessionId, messages, soundEnabled, persona, user]);
 
   const handleToggleSpeak = useCallback((text, targetPersonaId) => {
     if (isSpeaking) {
@@ -331,6 +388,33 @@ export default function ChatInterface({
             </span>
           </div>
           <div className="panel-header-actions">
+            {isAuthenticated ? (
+              <span
+                className="panel-tag history-synced-tag"
+                title="Tactical archive active — messages automatically saved to your Singh Enterprises profile"
+                style={{
+                  color: 'var(--green-nominal)',
+                  borderColor: 'rgba(0, 255, 157, 0.3)',
+                  background: 'rgba(0, 255, 157, 0.08)',
+                  fontSize: '9px',
+                }}
+              >
+                🛡️ ARCHIVE ACTIVE
+              </span>
+            ) : (
+              <span
+                className="panel-tag history-guest-tag"
+                title="Guest Mode — log in to automatically record and maintain your mission history"
+                style={{
+                  color: 'var(--gold)',
+                  borderColor: 'rgba(255, 184, 0, 0.3)',
+                  background: 'rgba(255, 184, 0, 0.08)',
+                  fontSize: '9px',
+                }}
+              >
+                ⚡ GUEST MODE
+              </span>
+            )}
             <button
               className="panel-action-btn"
               onClick={exportMissionLog}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { playClickSound, playThemeChangeSound } from '../utils/soundEffects';
 import PersonaSelector from './PersonaSelector';
 import { PERSONAS } from '../utils/marvelVoice';
+import { useAuth } from '../context/AuthContext';
 
 const ARMOR_PROTOCOLS = [
   { id: 'mark-iv', name: 'MARK IV', desc: 'Arc Cyan', color: '#00d4ff' },
@@ -21,13 +22,25 @@ export default function StatusBar({
   currentPersona,
   onSelectPersona,
   onToggleTelemetry,
+  user,
+  isAuthenticated,
+  onNavigateProfile,
+  onNavigateHome,
+  onNavigateLogin,
+  onSelectSession,
+  onOpenCommandPalette,
 }) {
+  const { fetchHistory } = useAuth();
   const [time, setTime] = useState(new Date());
   const [currentTheme, setCurrentTheme] = useState(() => {
     return localStorage.getItem('jarvis-armor-theme') || 'mark-iv';
   });
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [missionsMenuOpen, setMissionsMenuOpen] = useState(false);
+  const [missionsList, setMissionsList] = useState([]);
+  const [missionsLoading, setMissionsLoading] = useState(false);
   const themeRef = useRef(null);
+  const missionsRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -57,6 +70,9 @@ export default function StatusBar({
       if (themeRef.current && !themeRef.current.contains(e.target)) {
         setThemeMenuOpen(false);
       }
+      if (missionsRef.current && !missionsRef.current.contains(e.target)) {
+        setMissionsMenuOpen(false);
+      }
     }
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
@@ -65,6 +81,26 @@ export default function StatusBar({
       document.removeEventListener('touchstart', handleClickOutside);
     };
   }, []);
+
+  const toggleMissions = async () => {
+    playClickSound(soundEnabled);
+    if (!missionsMenuOpen) {
+      setMissionsMenuOpen(true);
+      if (isAuthenticated) {
+        setMissionsLoading(true);
+        try {
+          const list = await fetchHistory();
+          setMissionsList(list.slice(0, 7));
+        } catch {
+          setMissionsList([]);
+        } finally {
+          setMissionsLoading(false);
+        }
+      }
+    } else {
+      setMissionsMenuOpen(false);
+    }
+  };
 
   const selectTheme = (themeId) => {
     setCurrentTheme(themeId);
@@ -101,7 +137,12 @@ export default function StatusBar({
   return (
     <div className="topbar">
       {/* Left: Brand Logo & Persona indicator */}
-      <div className="jarvis-logo">
+      <div
+        className="jarvis-logo"
+        onClick={onNavigateHome}
+        style={{ cursor: 'pointer' }}
+        title="Singh Enterprises · Return to Home"
+      >
         <div
           className="logo-icon"
           style={{
@@ -216,6 +257,115 @@ export default function StatusBar({
           )}
         </div>
 
+        {/* Tactical Missions Switcher Dropdown */}
+        <div className="missions-selector-container" ref={missionsRef}>
+          <button
+            id="missions-switcher-btn"
+            className="hud-btn missions-btn"
+            onClick={toggleMissions}
+            title="Recent Tactical Mission Archives"
+          >
+            <span>📜</span>
+            <span className="sound-btn-desktop">MISSIONS</span>
+            <span style={{ fontSize: '9px', opacity: 0.7 }}>▾</span>
+          </button>
+
+          {missionsMenuOpen && (
+            <div className="missions-dropdown">
+              <div className="missions-dropdown-header">
+                <span>TACTICAL MISSION ARCHIVE</span>
+                {isAuthenticated && (
+                  <span style={{ color: 'var(--green-nominal, #00ff9d)', fontSize: '8px' }}>● SYNCED</span>
+                )}
+              </div>
+
+              {missionsLoading ? (
+                <div style={{ padding: '14px', textAlign: 'center', color: '#94a3b8', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+                  Accessing Singh Archive...
+                </div>
+              ) : !isAuthenticated ? (
+                <div style={{ padding: '12px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: 8 }}>
+                    Sign in to access and resume saved mission archives.
+                  </div>
+                  <button
+                    type="button"
+                    className="missions-view-all"
+                    onClick={() => { setMissionsMenuOpen(false); onNavigateLogin(); }}
+                  >
+                    LOG IN / SIGN UP →
+                  </button>
+                </div>
+              ) : missionsList.length === 0 ? (
+                <div style={{ padding: '14px', textAlign: 'center', color: '#94a3b8', fontSize: '11px' }}>
+                  No recorded missions yet.
+                </div>
+              ) : (
+                <div className="missions-list">
+                  {missionsList.map(sess => {
+                    const pm = PERSONAS[sess.persona] || PERSONAS.jarvis;
+                    const isCurrent = sess.session_id === sessionId;
+                    const date = new Date(sess.updated_at * 1000);
+                    const timeDisp = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return (
+                      <button
+                        key={sess.session_id}
+                        type="button"
+                        className={`mission-item ${isCurrent ? 'active' : ''}`}
+                        onClick={() => {
+                          setMissionsMenuOpen(false);
+                          playClickSound(soundEnabled);
+                          onSelectSession?.(sess.session_id);
+                        }}
+                      >
+                        <div
+                          className="mission-badge"
+                          style={{ color: pm.color, borderColor: `${pm.color}66` }}
+                        >
+                          {pm.shortName}
+                        </div>
+                        <div className="mission-info">
+                          <div className="mission-title">{sess.title}</div>
+                          <div className="mission-meta">
+                            {sess.message_count} msgs · {timeDisp} {isCurrent && ' · [CURRENT]'}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  className="missions-view-all"
+                  onClick={() => {
+                    setMissionsMenuOpen(false);
+                    onNavigateProfile();
+                  }}
+                >
+                  VIEW FULL ARCHIVE & EXPORTS →
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Command Palette Trigger (Ctrl+K / ⌘K) */}
+        <button
+          id="cmd-palette-btn"
+          className="hud-btn"
+          onClick={() => {
+            playClickSound(soundEnabled);
+            onOpenCommandPalette?.();
+          }}
+          title="Open Tactical Command Palette (Ctrl+K or ⌘K)"
+          style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', padding: '0 8px' }}
+        >
+          <span style={{ color: 'var(--cyan)' }}>⌘K</span>
+        </button>
+
         {/* Audio Toggle */}
         <button
           id="sound-toggle-btn"
@@ -231,6 +381,42 @@ export default function StatusBar({
           <span className="sound-btn-desktop">{soundEnabled ? '🔊 AUDIO: ON' : '🔇 AUDIO: OFF'}</span>
           <span className="sound-btn-mobile">{soundEnabled ? '🔊' : '🔇'}</span>
         </button>
+
+        {/* User Profile Chip (when authenticated) */}
+        {isAuthenticated && user ? (
+          <button
+            id="profile-btn"
+            className="hud-btn profile-chip-btn"
+            onClick={onNavigateProfile}
+            title={`Commander: ${user.full_name || user.username}`}
+            style={{ borderColor: `${persona.color}55`, gap: '7px' }}
+          >
+            <span
+              className="topbar-user-avatar"
+              style={{ background: `${persona.color}22`, borderColor: `${persona.color}77`, color: persona.color }}
+            >
+              {user.avatar_initials || (user.full_name || user.username).slice(0,2).toUpperCase()}
+            </span>
+            <span className="topbar-user-name">{user.full_name || user.username}</span>
+          </button>
+        ) : (
+          <button
+            id="topbar-login-btn"
+            className="hud-btn"
+            onClick={onNavigateLogin}
+            title="Sign in to save mission history and customize profile"
+            style={{
+              borderColor: `${persona.color}55`,
+              color: persona.color,
+              fontSize: '11px',
+              fontWeight: 600,
+              gap: '5px',
+            }}
+          >
+            <span>🛡️</span>
+            <span className="topbar-login-text">LOG IN</span>
+          </button>
+        )}
 
         {/* New Chat */}
         <button

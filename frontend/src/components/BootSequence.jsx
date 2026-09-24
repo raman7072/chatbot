@@ -53,11 +53,26 @@ export default function BootSequence({ onComplete }) {
       }
     }, 160);
 
-    return () => clearInterval(interval);
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+        clearInterval(interval);
+        onCompleteRef.current?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleSkip = () => {
+    onCompleteRef.current?.();
+  };
+
   return (
-    <div className="boot-screen">
+    <div className="boot-screen" onClick={handleSkip} title="Click anywhere or press Esc to skip boot sequence" style={{ cursor: 'pointer' }}>
       <div className="boot-logo">JARVIS</div>
       <div className="boot-subtitle">Just A Rather Very Intelligent System</div>
 
@@ -78,10 +93,15 @@ export default function BootSequence({ onComplete }) {
       <div style={{
         fontFamily: 'var(--font-mono)',
         fontSize: '10px',
-        color: 'rgba(56,189,248,0.38)',
-        letterSpacing: '3px',
+        color: 'rgba(56,189,248,0.5)',
+        letterSpacing: '2px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
       }}>
-        SINGH ENTERPRISES · SYSTEM BOOT · {progress}%
+        <span>SINGH ENTERPRISES · SYSTEM BOOT · {progress}%</span>
+        <span>·</span>
+        <span style={{ opacity: 0.6, fontSize: '9px' }}>[ TAP TO SKIP ]</span>
       </div>
     </div>
   );

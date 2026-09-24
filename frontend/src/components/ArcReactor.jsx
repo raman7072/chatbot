@@ -4,7 +4,6 @@ import { PERSONAS } from '../utils/marvelVoice';
 
 export default function ArcReactor({ streaming = false, soundEnabled = true, personaId = 'jarvis' }) {
   const [pulsing, setPulsing] = useState(false);
-  const [pulseCount, setPulseCount] = useState(0);
 
   const persona = PERSONAS[personaId] || PERSONAS.jarvis;
 
@@ -14,7 +13,6 @@ export default function ArcReactor({ streaming = false, soundEnabled = true, per
       navigator.vibrate([25, 40, 60]);
     }
     setPulsing(true);
-    setPulseCount(c => c + 1);
     setTimeout(() => setPulsing(false), 800);
   }, [soundEnabled]);
 
