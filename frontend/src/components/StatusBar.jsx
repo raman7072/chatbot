@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { playClickSound, playThemeChangeSound } from '../utils/soundEffects';
+import PersonaSelector from './PersonaSelector';
+import { PERSONAS } from '../utils/marvelVoice';
 
 const ARMOR_PROTOCOLS = [
   { id: 'mark-iv', name: 'MARK IV', desc: 'Arc Cyan', color: '#00d4ff' },
@@ -16,6 +18,9 @@ export default function StatusBar({
   onNewChat,
   soundEnabled,
   onToggleSound,
+  currentPersona,
+  onSelectPersona,
+  onToggleTelemetry,
 }) {
   const [time, setTime] = useState(new Date());
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -54,7 +59,11 @@ export default function StatusBar({
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const selectTheme = (themeId) => {
@@ -64,7 +73,7 @@ export default function StatusBar({
   };
 
   const handleSoundToggle = () => {
-    playClickSound(!soundEnabled); // Play click if turning on
+    playClickSound(!soundEnabled);
     onToggleSound();
   };
 
@@ -74,6 +83,7 @@ export default function StatusBar({
   };
 
   const activeProto = ARMOR_PROTOCOLS.find(p => p.id === currentTheme) || ARMOR_PROTOCOLS[0];
+  const persona = PERSONAS[currentPersona] || PERSONAS.jarvis;
 
   const timeStr = time.toLocaleTimeString('en-US', {
     hour12: false,
@@ -90,40 +100,80 @@ export default function StatusBar({
 
   return (
     <div className="topbar">
-      {/* Logo */}
+      {/* Left: Brand Logo & Persona indicator */}
       <div className="jarvis-logo">
-        <div className="logo-icon">
-          <svg viewBox="0 0 24 24">
+        <div
+          className="logo-icon"
+          style={{
+            borderColor: `${persona.color}77`,
+            boxShadow: `0 0 10px ${persona.glowColor}`,
+          }}
+        >
+          <svg viewBox="0 0 24 24" style={{ fill: persona.color }}>
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
-        <div>
-          <div className="logo-text">JARVIS</div>
-          <div className="logo-subtitle">Singh Enterprises · v5.0</div>
+        <div className="logo-text-group">
+          <div className="logo-text">
+            <span>JARVIS</span>
+            <span
+              className="persona-inline-tag"
+              style={{
+                color: persona.color,
+                borderColor: `${persona.color}66`,
+                background: `${persona.color}18`,
+              }}
+            >
+              {persona.shortName}
+            </span>
+          </div>
+          <div className="logo-subtitle">Singh Enterprises · Division 08</div>
         </div>
       </div>
 
-      {/* Center status */}
+      {/* Center status (Desktop / Tablet) */}
       <div className="topbar-center">
         {streaming ? (
           <div className="status-indicator" style={{ color: 'var(--gold)' }}>
             <div className="status-dot" style={{ background: 'var(--gold)', boxShadow: '0 0 6px var(--gold)' }} />
-            {toolInUse ? `EXECUTING: ${toolInUse.toUpperCase()}` : 'PROCESSING...'}
+            <span>{toolInUse ? `EXECUTING: ${toolInUse.toUpperCase()}` : 'PROCESSING STREAM...'}</span>
           </div>
         ) : (
-          <div className="status-indicator">
-            <div className="status-dot" />
-            SYSTEMS OPERATIONAL
+          <div className="status-indicator" style={{ color: persona.color }}>
+            <div className="status-dot" style={{ background: persona.color, boxShadow: `0 0 6px ${persona.color}` }} />
+            <span>ONLINE · {persona.title.toUpperCase()}</span>
           </div>
         )}
         <div className="topbar-time">{timeStr} · {dateStr}</div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(0,212,255,0.4)' }}>
+        <div className="topbar-session">
           SESSION: {sessionId?.slice(0, 8).toUpperCase()}
         </div>
       </div>
 
       {/* Right actions */}
-      <div className="topbar-right" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div className="topbar-right">
+        {/* Mobile HUD Telemetry Button (Visible on screens <960px) */}
+        <button
+          id="mobile-hud-btn"
+          className="hud-btn mobile-hud-toggle-btn"
+          onClick={() => {
+            playClickSound(soundEnabled);
+            onToggleTelemetry?.();
+          }}
+          title="Open Tactical Telemetry & Arc Reactor"
+          style={{ borderColor: `${persona.color}55`, color: persona.color }}
+        >
+          <span className="mobile-btn-icon">⚡</span>
+          <span className="mobile-btn-text">HUD</span>
+        </button>
+
+        {/* Marvel AI Persona Selector */}
+        <PersonaSelector
+          currentPersona={currentPersona}
+          onSelectPersona={onSelectPersona}
+          soundEnabled={soundEnabled}
+        />
+
         {/* Armor Protocol Theme Selector */}
         <div className="theme-selector-container" ref={themeRef}>
           <button
@@ -135,8 +185,11 @@ export default function StatusBar({
             }}
             title="Singh Armor Protocols (Theme Switcher)"
           >
-            <span className="theme-indicator-dot" style={{ background: activeProto.color, boxShadow: `0 0 6px ${activeProto.color}` }} />
-            {activeProto.name}
+            <span
+              className="theme-indicator-dot"
+              style={{ background: activeProto.color, boxShadow: `0 0 6px ${activeProto.color}` }}
+            />
+            <span className="theme-name-label">{activeProto.name}</span>
             <span style={{ fontSize: '9px', opacity: 0.7 }}>▾</span>
           </button>
 
@@ -166,25 +219,28 @@ export default function StatusBar({
         {/* Audio Toggle */}
         <button
           id="sound-toggle-btn"
-          className="hud-btn"
+          className="hud-btn sound-btn"
           onClick={handleSoundToggle}
           title={soundEnabled ? "Mute Voice & SFX (Audio ON)" : "Unmute Voice & SFX (Audio MUTED)"}
           style={{
-            borderColor: soundEnabled ? 'rgba(0,212,255,0.4)' : 'rgba(255,34,68,0.4)',
+            borderColor: soundEnabled ? 'rgba(56,189,248,0.4)' : 'rgba(255,34,68,0.4)',
             color: soundEnabled ? 'var(--cyan)' : 'var(--red-alert)',
           }}
+          aria-label={soundEnabled ? "Audio On" : "Audio Muted"}
         >
-          {soundEnabled ? '🔊 AUDIO: ON' : '🔇 AUDIO: MUTED'}
+          <span className="sound-btn-desktop">{soundEnabled ? '🔊 AUDIO: ON' : '🔇 AUDIO: OFF'}</span>
+          <span className="sound-btn-mobile">{soundEnabled ? '🔊' : '🔇'}</span>
         </button>
 
         {/* New Chat */}
         <button
           id="new-chat-btn"
-          className="hud-btn"
+          className="hud-btn new-chat-btn"
           onClick={handleNewChatClick}
-          title="Start a new conversation"
+          title="Start a new tactical session"
         >
-          ✦ NEW CHAT
+          <span className="new-chat-desktop">✦ NEW CHAT</span>
+          <span className="new-chat-mobile">✦ NEW</span>
         </button>
       </div>
     </div>

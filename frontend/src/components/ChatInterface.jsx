@@ -3,13 +3,14 @@ import ReactMarkdown from 'react-markdown';
 import VoiceButton, { speak, stopSpeaking } from './VoiceButton';
 import SystemMonitor from './SystemMonitor';
 import ArcReactor from './ArcReactor';
+import { PERSONAS } from '../utils/marvelVoice';
 import { playSendSound, playReceiveSound, playToolSound, playClickSound } from '../utils/soundEffects';
 
-const QUICK_COMMANDS = [
+export const QUICK_COMMANDS = [
   { icon: '🔢', label: 'Calculate', cmd: 'Calculate: 2^10 + 15% of 200 - sqrt(144)' },
-  { icon: '🌐', label: 'Search the web', cmd: 'Search the web for the latest advancements in AI and robotics' },
+  { icon: '🌐', label: 'Web search', cmd: 'Search the web for the latest advancements in AI and robotics' },
   { icon: '📖', label: 'Wikipedia', cmd: 'Look up Singh Enterprises and latest AI innovations on Wikipedia' },
-  { icon: '💻', label: 'System status', cmd: 'Run a full system diagnostic and report status' },
+  { icon: '💻', label: 'Diagnostics', cmd: 'Run a full system diagnostic and report status' },
   { icon: '🌤️', label: 'Weather', cmd: 'What is the current weather and forecast for Tokyo?' },
   { icon: '🐍', label: 'Run Python', cmd: 'Write and execute Python code to calculate the first 10 prime numbers' },
   { icon: '📝', label: 'Save note', cmd: 'Save a note titled "Arc Reactor Status" with content: Singh Enterprises Division 08 - Output at 100% capacity' },
@@ -20,6 +21,8 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').r
 
 export default function ChatInterface({
   sessionId,
+  currentPersona = 'jarvis',
+  onSelectPersona,
   onStreamingChange,
   onToolChange,
   soundEnabled = true,
@@ -33,6 +36,8 @@ export default function ChatInterface({
   const textareaRef = useRef(null);
   const abortRef = useRef(null);
 
+  const persona = PERSONAS[currentPersona] || PERSONAS.jarvis;
+
   // Synchronize streaming and tool state changes to parent StatusBar
   const updateStreaming = useCallback((isStream) => {
     setStreaming(isStream);
@@ -44,15 +49,16 @@ export default function ChatInterface({
     onToolChange?.(tool);
   }, [onToolChange]);
 
-  // Initial greeting on session load
+  // Initial greeting on session load or persona change
   useEffect(() => {
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: '*Singh Enterprises Division 08 — All systems online and operational.*\n\nGood day. I am **J.A.R.V.I.S.** — Just A Rather Very Intelligent System. How may I assist you today, Sir?\n\nI have full access to deep web search, Wikipedia archives, file operations, hardware diagnostics, sandboxed Python computation, meteorological data, and persistent tactical memory.',
+      content: persona.greeting,
       timestamp: new Date(),
+      personaId: persona.id,
     }]);
-  }, [sessionId]);
+  }, [sessionId, currentPersona]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto scroll
   useEffect(() => {
@@ -68,7 +74,9 @@ export default function ChatInterface({
     setIsSpeaking(false);
 
     setInput('');
-    textareaRef.current && (textareaRef.current.style.height = 'auto');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
 
     // Add user message
     const userMsgObj = {
@@ -87,6 +95,7 @@ export default function ChatInterface({
       content: '',
       timestamp: new Date(),
       streaming: true,
+      personaId: currentPersona,
       toolsExecuted: [],
     }]);
 
@@ -103,7 +112,11 @@ export default function ChatInterface({
       const res = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg, session_id: sessionId }),
+        body: JSON.stringify({
+          message: userMsg,
+          session_id: sessionId,
+          persona: currentPersona,
+        }),
         signal: controller.signal,
       });
 
@@ -204,10 +217,11 @@ export default function ChatInterface({
         }
       }
 
-      // Speak the response if sound is enabled
+      // Speak the response if sound is enabled using active Marvel persona
       if (fullContent && soundEnabled) {
         speak(
           fullContent,
+          currentPersona,
           () => setIsSpeaking(true),
           () => setIsSpeaking(false)
         );
@@ -229,7 +243,7 @@ export default function ChatInterface({
       updateStreaming(false);
       updateToolInUse(null);
     }
-  }, [input, streaming, sessionId, soundEnabled, updateStreaming, updateToolInUse]);
+  }, [input, streaming, sessionId, soundEnabled, currentPersona, updateStreaming, updateToolInUse]);
 
   const clearChat = useCallback(() => {
     stopSpeaking();
@@ -238,20 +252,22 @@ export default function ChatInterface({
     setMessages([{
       id: 'greeting',
       role: 'assistant',
-      content: '*Singh Enterprises Division 08 — Communication buffer cleared. All modules nominal.*\n\nHow may I assist you, Sir?',
+      content: persona.greeting,
       timestamp: new Date(),
+      personaId: persona.id,
     }]);
-  }, [soundEnabled]);
+  }, [soundEnabled, persona]);
 
   const exportMissionLog = useCallback(() => {
     playClickSound(soundEnabled);
-    let log = `# ⚡ J.A.R.V.I.S. MISSION TRANSCRIPT\n`;
+    let log = `# ⚡ ${persona.name} MISSION TRANSCRIPT\n`;
+    log += `**AI Protocol**: ${persona.name} (${persona.title})\n`;
     log += `**Organization**: Singh Enterprises · Division 08\n`;
     log += `**Session ID**: ${sessionId}\n`;
     log += `**Exported At**: ${new Date().toISOString()}\n\n---\n\n`;
 
     messages.forEach((m) => {
-      const sender = m.role === 'assistant' ? 'J.A.R.V.I.S.' : 'SIR';
+      const sender = m.role === 'assistant' ? persona.name : 'USER / COMMANDER';
       const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString() : '';
       log += `### [${time}] ${sender}\n\n`;
       if (m.toolsExecuted && m.toolsExecuted.length > 0) {
@@ -269,25 +285,26 @@ export default function ChatInterface({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `jarvis_mission_log_${Date.now()}.md`);
+    link.setAttribute('download', `${persona.id}_mission_log_${Date.now()}.md`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [sessionId, messages, soundEnabled]);
+  }, [sessionId, messages, soundEnabled, persona]);
 
-  const handleToggleSpeak = useCallback((text) => {
+  const handleToggleSpeak = useCallback((text, targetPersonaId) => {
     if (isSpeaking) {
       stopSpeaking();
       setIsSpeaking(false);
     } else {
       speak(
         text,
+        targetPersonaId || currentPersona,
         () => setIsSpeaking(true),
         () => setIsSpeaking(false)
       );
     }
-  }, [isSpeaking]);
+  }, [isSpeaking, currentPersona]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -308,8 +325,10 @@ export default function ChatInterface({
       <div className="hud-panel chat-panel">
         <div className="panel-header">
           <div className="panel-header-left">
-            <span>💬</span>
-            <span>COMMUNICATION INTERFACE</span>
+            <span style={{ color: persona.color }}>💬</span>
+            <span style={{ letterSpacing: '1px' }}>
+              COMMUNICATION MATRIX · <span style={{ color: persona.color }}>{persona.name}</span>
+            </span>
           </div>
           <div className="panel-header-actions">
             <button
@@ -317,18 +336,18 @@ export default function ChatInterface({
               onClick={exportMissionLog}
               title="Export tactical transcript to markdown"
             >
-              📜 EXPORT LOG
+              📜 <span className="action-btn-label">EXPORT LOG</span>
             </button>
             <button
               className="panel-action-btn"
               onClick={clearChat}
               disabled={streaming}
-              title="Clear chat buffer"
+              title="Clear communication buffer"
             >
-              🗑️ CLEAR
+              🗑️ <span className="action-btn-label">CLEAR</span>
             </button>
-            <span className="panel-tag">
-              {streaming ? '● ACTIVE' : '○ STANDBY'}
+            <span className="panel-tag" style={{ color: streaming ? 'var(--gold)' : persona.color }}>
+              {streaming ? '● STREAMING' : '○ STANDBY'}
             </span>
           </div>
         </div>
@@ -339,11 +358,45 @@ export default function ChatInterface({
             <MessageBubble
               key={msg.id}
               msg={msg}
+              currentPersona={currentPersona}
               onSpeak={handleToggleSpeak}
               isSpeaking={isSpeaking}
             />
           ))}
           <div ref={messagesEndRef} />
+        </div>
+
+        {/* Tactical Shortcuts Toolbar (Single Unified Location) */}
+        <div className="quick-chips-wrapper">
+          <div className="quick-chips-header">
+            <span className="quick-chips-title">
+              <span
+                className="chips-pulse-dot"
+                style={{ background: persona.color, boxShadow: `0 0 6px ${persona.color}` }}
+              />
+              TACTICAL SHORTCUTS
+            </span>
+          </div>
+          <div className="quick-chips-scroll">
+            {QUICK_COMMANDS.map((cmd, i) => (
+              <button
+                key={i}
+                className="quick-chip"
+                onClick={() => {
+                  playClickSound(soundEnabled);
+                  sendMessage(cmd.cmd);
+                }}
+                disabled={streaming}
+                title={cmd.cmd}
+                style={{
+                  '--chip-accent': persona.color,
+                }}
+              >
+                <span className="quick-chip-icon">{cmd.icon}</span>
+                <span className="quick-chip-label">{cmd.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Input area */}
@@ -361,9 +414,11 @@ export default function ChatInterface({
               value={input}
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
-              placeholder="Speak your command, Sir... (Enter to send, Shift+Enter for newline)"
+              placeholder={`Direct command to ${persona.name}... (Enter to send)`}
               rows={1}
               disabled={streaming}
+              autoComplete="off"
+              autoCorrect="off"
             />
             <button
               id="send-btn"
@@ -373,7 +428,12 @@ export default function ChatInterface({
                 sendMessage();
               }}
               disabled={streaming || !input.trim()}
-              title="Send message"
+              title="Transmit command"
+              style={{
+                background: input.trim() && !streaming ? persona.color : undefined,
+                color: input.trim() && !streaming ? '#000000' : undefined,
+                boxShadow: input.trim() && !streaming ? `0 0 14px ${persona.color}88` : undefined,
+              }}
             >
               {streaming ? <SpinnerIcon /> : <SendIcon />}
             </button>
@@ -381,39 +441,56 @@ export default function ChatInterface({
         </div>
       </div>
 
-      {/* Right sidebar */}
+      {/* Right sidebar (Desktop view: Persona Core + Arc Reactor + System Diagnostics) */}
       <div className="right-sidebar">
-        {/* Arc Reactor Visualizer */}
-        <ArcReactor streaming={streaming} soundEnabled={soundEnabled} />
-
-        {/* System monitor */}
-        <SystemMonitor />
-
-        {/* Quick commands */}
-        <div className="hud-panel">
+        {/* Active Marvel Persona Widget */}
+        <div className="hud-panel persona-side-card" style={{ borderColor: `${persona.color}55` }}>
           <div className="panel-header">
             <div className="panel-header-left">
-              <span>⚡</span>
-              <span>QUICK COMMANDS</span>
+              <span style={{ color: persona.color }}>◈</span>
+              <span>ACTIVE AI CORE</span>
+            </div>
+            <span
+              className="panel-tag"
+              style={{ color: persona.color, borderColor: `${persona.color}66` }}
+            >
+              {persona.shortName}
+            </span>
+          </div>
+          <div className="persona-side-body">
+            <div className="persona-side-top">
+              <div
+                className="persona-side-avatar"
+                style={{
+                  borderColor: persona.color,
+                  color: persona.color,
+                  boxShadow: `0 0 14px ${persona.glowColor}`,
+                }}
+              >
+                {persona.avatar}
+              </div>
+              <div className="persona-side-meta">
+                <div className="persona-side-name" style={{ color: persona.color }}>
+                  {persona.name}
+                </div>
+                <div className="persona-side-sub">{persona.subtitle}</div>
+              </div>
+            </div>
+            <div className="persona-side-quote">
+              "{persona.samplePhrase}"
             </div>
           </div>
-          <div className="quick-cmds">
-            {QUICK_COMMANDS.map((cmd, i) => (
-              <button
-                key={i}
-                className="quick-cmd-btn"
-                onClick={() => {
-                  playClickSound(soundEnabled);
-                  sendMessage(cmd.cmd);
-                }}
-                disabled={streaming}
-              >
-                <span className="quick-cmd-icon">{cmd.icon}</span>
-                {cmd.label}
-              </button>
-            ))}
-          </div>
         </div>
+
+        {/* Arc Reactor Visualizer (reactive to active persona) */}
+        <ArcReactor
+          streaming={streaming}
+          soundEnabled={soundEnabled}
+          personaId={currentPersona}
+        />
+
+        {/* Real-time Hardware System Monitor */}
+        <SystemMonitor />
       </div>
     </div>
   );
@@ -557,8 +634,11 @@ function CodeBlock({ inline, className, children, ...props }) {
   );
 }
 
-function MessageBubble({ msg, onSpeak, isSpeaking }) {
-  const isJarvis = msg.role === 'assistant';
+function MessageBubble({ msg, currentPersona, onSpeak, isSpeaking }) {
+  const isAssistant = msg.role === 'assistant';
+  const personaKey = msg.personaId || currentPersona;
+  const persona = PERSONAS[personaKey] || PERSONAS.jarvis;
+
   const time = msg.timestamp?.toLocaleTimeString('en-US', {
     hour12: false, hour: '2-digit', minute: '2-digit',
   });
@@ -572,15 +652,30 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
   };
 
   return (
-    <div className={`message ${isJarvis ? 'jarvis' : 'user'}`}>
-      <div className={`msg-avatar ${isJarvis ? 'jarvis' : 'user'}`}>
-        {isJarvis ? 'JV' : 'SR'}
+    <div className={`message ${isAssistant ? 'assistant' : 'user'} persona-${personaKey}`}>
+      <div
+        className={`msg-avatar ${isAssistant ? 'assistant' : 'user'}`}
+        style={isAssistant ? {
+          borderColor: persona.color,
+          color: persona.color,
+          boxShadow: `0 0 8px ${persona.glowColor}`,
+        } : undefined}
+      >
+        {isAssistant ? persona.avatar : 'SR'}
       </div>
       <div className="msg-body">
         <div className="msg-meta">
-          {isJarvis ? 'J.A.R.V.I.S.' : 'SIR'} · {time}
+          <span style={{ color: isAssistant ? persona.color : undefined, fontWeight: 600 }}>
+            {isAssistant ? persona.name : 'COMMANDER'}
+          </span>
+          {' '}· {time}
         </div>
-        <div className={`msg-bubble ${isJarvis ? 'jarvis' : 'user'}`}>
+        <div
+          className={`msg-bubble ${isAssistant ? 'assistant' : 'user'}`}
+          style={isAssistant ? {
+            borderColor: `${persona.color}35`,
+          } : undefined}
+        >
           {/* Active tool indicator during streaming */}
           {msg.toolInUse && (
             <div className="tool-indicator" style={{ marginBottom: 8 }}>
@@ -605,13 +700,13 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
                 {msg.content}
               </ReactMarkdown>
               {msg.streaming && !msg.toolInUse && (
-                <span className="typing-cursor" />
+                <span className="typing-cursor" style={{ background: persona.color }} />
               )}
             </>
           ) : msg.streaming ? (
             <div className="tool-indicator">
               <div className="tool-spinner" />
-              <span>Thinking</span>
+              <span>Synthesizing response</span>
               <span className="typing-dots">
                 <span /><span /><span />
               </span>
@@ -619,7 +714,7 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
           ) : null}
 
           {/* Action toolbar for completed assistant response */}
-          {isJarvis && msg.content && !msg.streaming && (
+          {isAssistant && msg.content && !msg.streaming && (
             <div className="msg-actions">
               <button
                 className="msg-action-btn"
@@ -631,10 +726,11 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
               {onSpeak && (
                 <button
                   className={`msg-action-btn ${isSpeaking ? 'active' : ''}`}
-                  onClick={() => onSpeak(msg.content)}
-                  title="Vocalize this response"
+                  onClick={() => onSpeak(msg.content, personaKey)}
+                  title={`Vocalize with ${persona.name}'s voice`}
+                  style={isSpeaking ? { color: persona.color, borderColor: persona.color } : undefined}
                 >
-                  {isSpeaking ? '⏹ STOP' : '🔊 VOCALIZE'}
+                  {isSpeaking ? '⏹ STOP' : `🔊 VOCALIZE (${persona.shortName})`}
                 </button>
               )}
             </div>
@@ -647,7 +743,7 @@ function MessageBubble({ msg, onSpeak, isSpeaking }) {
 
 function SendIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
       <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
     </svg>
   );
@@ -655,9 +751,8 @@ function SendIcon() {
 
 function SpinnerIcon() {
   return (
-    <svg viewBox="0 0 24 24" style={{ animation: 'spin 0.8s linear infinite' }}>
+    <svg viewBox="0 0 24 24" width="18" height="18" style={{ animation: 'spin 0.8s linear infinite' }}>
       <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
     </svg>
   );
 }
-

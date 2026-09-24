@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { speakPersonaText, stopSpeaking as cancelSpeech } from '../utils/marvelVoice';
 
 export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
   const [listening, setListening] = useState(false);
@@ -20,6 +21,10 @@ export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
         const transcript = event.results[0][0].transcript;
         onTranscript(transcript);
         setListening(false);
+        // Haptic feedback on Android if supported
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          navigator.vibrate([20, 40, 20]);
+        }
       };
 
       recognition.onend = () => setListening(false);
@@ -35,8 +40,15 @@ export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
       recognitionRef.current?.stop();
       setListening(false);
     } else {
-      recognitionRef.current?.start();
-      setListening(true);
+      try {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          navigator.vibrate(25);
+        }
+        recognitionRef.current?.start();
+        setListening(true);
+      } catch {
+        setListening(false);
+      }
     }
   };
 
@@ -45,8 +57,9 @@ export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
       <button
         className="voice-btn"
         disabled
-        title="Voice not supported in this browser"
-        style={{ opacity: 0.3, cursor: 'not-allowed' }}
+        title="Voice speech recognition not supported in this browser"
+        style={{ opacity: 0.35, cursor: 'not-allowed' }}
+        aria-label="Voice input not supported"
       >
         <MicIcon />
       </button>
@@ -59,7 +72,8 @@ export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
       className={`voice-btn ${listening ? 'listening' : ''}`}
       onClick={toggleListening}
       disabled={disabled || isSpeaking}
-      title={listening ? 'Listening... (click to stop)' : 'Voice input'}
+      title={listening ? 'Listening to speech... (Tap to stop)' : 'Voice Input (Tap to speak)'}
+      aria-label={listening ? 'Stop listening' : 'Start voice input'}
     >
       {listening ? <StopIcon /> : <MicIcon />}
     </button>
@@ -67,46 +81,11 @@ export default function VoiceButton({ onTranscript, isSpeaking, disabled }) {
 }
 
 export function stopSpeaking() {
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-  }
+  cancelSpeech();
 }
 
-export function speak(text, onStart, onEnd) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return;
-  stopSpeaking();
-
-  // Clean text: remove markdown symbols
-  const clean = text
-    .replace(/#{1,6}\s/g, '')
-    .replace(/\*{1,2}(.*?)\*{1,2}/g, '$1')
-    .replace(/`{1,3}[^`]*`{1,3}/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\n{2,}/g, '. ')
-    .replace(/\n/g, ' ')
-    .slice(0, 500); // limit TTS length
-
-  if (!clean.trim()) return;
-
-  const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.rate = 0.95;
-  utterance.pitch = 0.85;
-  utterance.volume = 1;
-
-  utterance.onstart = () => onStart?.();
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = () => onEnd?.();
-
-  // Try to pick a British male voice
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v =>
-    v.name.toLowerCase().includes('british') ||
-    v.name.toLowerCase().includes('daniel') ||
-    (v.lang === 'en-GB' && v.name.toLowerCase().includes('male'))
-  ) || voices.find(v => v.lang === 'en-GB') || voices[0];
-  if (preferred) utterance.voice = preferred;
-
-  window.speechSynthesis.speak(utterance);
+export function speak(text, personaId = 'jarvis', onStart, onEnd) {
+  speakPersonaText(text, personaId, onStart, onEnd);
 }
 
 function MicIcon() {
